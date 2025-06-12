@@ -53,10 +53,10 @@ Vector3 MetersToWorld(Vector3 meters)
 }
 
 
-Math::Vector3d ComputeBarycenter(Physics::RigidBody<double>* bodies[], int count)
+Math::Vector3d ComputeBarycenter(Physics::RigidBody<FLOAT>* bodies[], int count)
 {
     double totalMass = 0.0;
-    Math::Vector3d weighted;
+    Math::Vector3<FLOAT> weighted;
 
     for (int i = 0; i < count; i++)
     {
@@ -105,13 +105,13 @@ int main()
         elapsedTime += TIME_STEP * GetFrameTime();
         // Compute gravitational accelerations
         Physics::RigidBody<FLOAT>* bodies[] = { &earth, &moonA, &moonB };
-        Math::Vector3d accelerations[3];
+        Math::Vector3<FLOAT> accelerations[3];
 
         for (int i = 0; i < 3; i++) {
-            Math::Vector3d acc;
+            Math::Vector3<FLOAT> acc;
             for (int j = 0; j < 3; j++) {
                 if (i != j) {
-                    Math::Vector3d a = bodies[i]->ComputeAcceleration(*bodies[j]);
+                    Math::Vector3<FLOAT> a = bodies[i]->ComputeAcceleration(*bodies[j]);
                     acc += a;
                 }
             }
