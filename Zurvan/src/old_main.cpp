@@ -1,9 +1,8 @@
-#include <cstdio>
-
 #include "raylib.h"
-
-#include "Math.h"
-#include "Physics.h"
+#include <math.h>
+#include <stdio.h>
+#include <iostream>
+#include "raymath.h"
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -14,8 +13,41 @@ const double MOON_MASS = 7.347e22;
 const double EARTH_MOON_DISTANCE = 384400000;
 const double MOON_SPEED = 1022;
 const double DISTANCE_SCALE = 1e6;       // 1 px = 1,000,000 meters
-#define TIME_SCALAR 20.0
+#define TIME_SCALAR 50.0
 const double TIME_STEP = 60 * 60 * TIME_SCALAR;        // 1 hour per frame
+
+typedef struct Body {
+    Vector3 position;   // in meters
+    Vector3 velocity;   // in m/s
+    double mass;
+    Color color;
+} Body;
+
+Vector3 ComputeAcceleration(Body* self, Body* other) {
+    Vector3 direction = Vector3Subtract(other->position, self->position);
+    double distance = Vector3Length(direction);
+    if (distance < 1.0) distance = 1.0;
+
+    double force = (G * other->mass) / (distance * distance);
+    direction = Vector3Scale(Vector3Normalize(direction), (float)force);
+    return direction;
+}
+
+Vector3 MetersToWorld(Vector3 meters) {
+    return Vector3 { meters.x / (float)DISTANCE_SCALE, meters.y / (float)DISTANCE_SCALE, meters.z / (float)DISTANCE_SCALE };
+}
+
+Vector3 ComputeBarycenter(Body* bodies[], int count) {
+    double totalMass = 0.0;
+    Vector3 weighted = { 0 };
+
+    for (int i = 0; i < count; i++) {
+        totalMass += bodies[i]->mass;
+        weighted = Vector3Add(weighted, Vector3Scale(bodies[i]->position, (float)bodies[i]->mass));
+    }
+
+    return Vector3Scale(weighted, 1.0f / (float)totalMass);
+}
 
 
 void Draw3DGridWithAxes(int size, float spacing)
@@ -24,16 +56,16 @@ void Draw3DGridWithAxes(int size, float spacing)
     for (int i = -size; i <= size; i++)
     {
         // XZ plane (Y=0)
-        DrawLine3D({ i * spacing, 0, -size * spacing }, { i * spacing, 0, size * spacing }, DARKGRAY);
-        DrawLine3D({ -size * spacing, 0, i * spacing }, { size * spacing, 0, i * spacing }, DARKGRAY);
+        DrawLine3D({ i* spacing, 0, -size * spacing }, { i* spacing, 0, size* spacing }, DARKGRAY);
+        DrawLine3D({ -size * spacing, 0, i* spacing }, { size* spacing, 0, i* spacing }, DARKGRAY);
 
         // XY plane (Z=0)
-        DrawLine3D({ i * spacing, -size * spacing, 0 }, { i * spacing, size * spacing, 0 }, Fade(DARKGRAY, 0.3f));
-        DrawLine3D({ -size * spacing, i * spacing, 0 }, { size * spacing, i * spacing, 0 }, Fade(DARKGRAY, 0.3f));
+        DrawLine3D({ i* spacing, -size * spacing, 0 }, { i* spacing, size* spacing, 0 }, Fade(DARKGRAY, 0.3f));
+        DrawLine3D({ -size * spacing, i* spacing, 0 }, { size* spacing, i* spacing, 0 }, Fade(DARKGRAY, 0.3f));
 
         // YZ plane (X=0)
-        DrawLine3D({ 0, i * spacing, -size * spacing }, Vector3{ 0, i * spacing, size * spacing }, Fade(DARKGRAY, 0.3f));
-        DrawLine3D({ 0, -size * spacing, i * spacing }, Vector3{ 0, size * spacing, i * spacing }, Fade(DARKGRAY, 0.3f));
+        DrawLine3D({ 0, i* spacing, -size * spacing }, Vector3 { 0, i* spacing, size* spacing }, Fade(DARKGRAY, 0.3f));
+        DrawLine3D({ 0, -size * spacing, i* spacing }, Vector3 { 0, size* spacing, i* spacing }, Fade(DARKGRAY, 0.3f));
     }
 
     // Draw axis lines
@@ -42,30 +74,8 @@ void Draw3DGridWithAxes(int size, float spacing)
     DrawLine3D({ 0, 0, 0 }, { 0, 0, 100 }, BLUE);  // Z axis
 
     // Draw origin
-    DrawSphere(Vector3{ 0, 0, 0 }, 1.0f, YELLOW);
+    DrawSphere(Vector3 { 0, 0, 0 }, 1.0f, YELLOW);
 }
-
-
-Vector3 MetersToWorld(Vector3 meters)
-{
-    return Vector3{ meters.x / (float)DISTANCE_SCALE, meters.y / (float)DISTANCE_SCALE, meters.z / (float)DISTANCE_SCALE };
-}
-
-
-Math::Vector3d ComputeBarycenter(Physics::RigidBody* bodies[], int count)
-{
-    double totalMass = 0.0;
-    Math::Vector3d weighted;
-
-    for (int i = 0; i < count; i++)
-    {
-        totalMass += bodies[i]->mass;
-        weighted += bodies[i]->position * bodies[i]->mass;
-    }
-
-    return weighted * (1.0 / totalMass);
-}
-
 
 int main()
 {
@@ -79,23 +89,25 @@ int main()
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-    Physics::RigidBody earth;
-    earth.position = Math::Vector3d{ 0, 0, 0 };
-    earth.velocity = Math::Vector3d{ 0, 0, 0 };
+    // Bodies
+    Body earth;
+    earth.position = { 0, 0, 0 };
+    earth.velocity = { 0 };
     earth.mass = EARTH_MASS;
     earth.color = BLUE;
 
-    Physics::RigidBody moonA;
-    moonA.position = Math::Vector3d{ (float)EARTH_MOON_DISTANCE, 0, 0 };
-    moonA.velocity = Math::Vector3d{ 0, 0, (float)MOON_SPEED };
+    Body moonA;
+    moonA.position = { (float)EARTH_MOON_DISTANCE, 0, 0 };
+    moonA.velocity = { 0, 0, (float)MOON_SPEED };
     moonA.mass = MOON_MASS;
     moonA.color = LIGHTGRAY;
 
-    Physics::RigidBody moonB;
-    moonB.position = Math::Vector3d{ 0, 0, -300000000 };
-    moonB.velocity = Math::Vector3d{ 900, 0, 0 };
+    Body moonB;
+    moonB.position = { 0, 0, -300000000 };
+    moonB.velocity = { 900, 0, 0 };
     moonB.mass = MOON_MASS;
     moonB.color = ORANGE;
+
 
     double elapsedTime = 0;
     DisableCursor();
@@ -103,25 +115,24 @@ int main()
     {
         elapsedTime += TIME_STEP * GetFrameTime();
         // Compute gravitational accelerations
-        Physics::RigidBody* bodies[] = { &earth, &moonA, &moonB };
-        Math::Vector3d accelerations[3];
-
+        Body* bodies[] = { &earth, &moonA, &moonB };
+        Vector3 accelerations[3] = { 0 };
+        
         for (int i = 0; i < 3; i++) {
-            Math::Vector3d acc;
+            Vector3 acc = { 0 };
             for (int j = 0; j < 3; j++) {
                 if (i != j) {
-                    Math::Vector3d a = ComputeAcceleration(bodies[i], bodies[j]);
-                    acc += a;
+                    Vector3 a = ComputeAcceleration(bodies[i], bodies[j]);
+                    acc = Vector3Add(acc, a);
                 }
             }
             accelerations[i] = acc;
         }
-
+        
         // Apply motion
-        for (int i = 0; i < 3; i++)
-        {
-            bodies[i]->velocity += accelerations[i] * (TIME_STEP * GetFrameTime());
-            bodies[i]->position += bodies[i]->velocity * (TIME_STEP * GetFrameTime());
+        for (int i = 0; i < 3; i++) {
+            bodies[i]->velocity = Vector3Add(bodies[i]->velocity, Vector3Scale(accelerations[i], TIME_STEP * GetFrameTime()));
+            bodies[i]->position = Vector3Add(bodies[i]->position, Vector3Scale(bodies[i]->velocity, TIME_STEP * GetFrameTime()));
         }
 
         UpdateCamera(&camera, CAMERA_FREE);
@@ -133,24 +144,25 @@ int main()
         // Draw coordinate axes
         Draw3DGridWithAxes(100, 10.0f);
 
+
         for (int i = 0; i < 3; i++) {
-            Vector3 pos = MetersToWorld(bodies[i]->position.ToRaylibVector());
+            Vector3 pos = MetersToWorld(bodies[i]->position);
             //float radius = (float)(2.0 + log10(bodies[i]->mass) - 21);
             DrawSphere(pos, 10, bodies[i]->color);
         }
 
-        DrawLine3D(MetersToWorld(earth.position.ToRaylibVector()), MetersToWorld(moonA.position.ToRaylibVector()), RED);
-        DrawLine3D(MetersToWorld(earth.position.ToRaylibVector()), MetersToWorld(moonB.position.ToRaylibVector()), RED);
+        DrawLine3D(MetersToWorld(earth.position), MetersToWorld(moonA.position), RED);
+        DrawLine3D(MetersToWorld(earth.position), MetersToWorld(moonB.position), RED);
 
         // Optional: show barycenter
-        Vector3 bary = MetersToWorld(ComputeBarycenter(bodies, 3).ToRaylibVector());
+        Vector3 bary = MetersToWorld(ComputeBarycenter(bodies, 3));
         DrawSphere(bary, 10.0f, RED);
         EndMode3D();
 
         // Example positions from world space
-        Vector2 screenX = GetWorldToScreen(Vector3{ 105, 0, 0 }, camera);
-        Vector2 screenY = GetWorldToScreen(Vector3{ 0, 105, 0 }, camera);
-        Vector2 screenZ = GetWorldToScreen(Vector3{ 0, 0, 105 }, camera);
+        Vector2 screenX = GetWorldToScreen(Vector3 { 105, 0, 0 }, camera);
+        Vector2 screenY = GetWorldToScreen(Vector3 { 0, 105, 0 }, camera);
+        Vector2 screenZ = GetWorldToScreen(Vector3 { 0, 0, 105 }, camera);
 
         // Dynamic font size
         int fontSize = 20;
@@ -171,16 +183,16 @@ int main()
 
 
         // Compute distances (in meters)
-        double distA = earth.position.Distance(moonA.position);
-        double distB = earth.position.Distance(moonB.position);
+        double distA = Vector3Distance(earth.position, moonA.position);
+        double distB = Vector3Distance(earth.position, moonB.position);
 
         // Compute midpoints between Earth and each moon
-        Math::Vector3d midA = (earth.position + moonA.position) * 0.5;
-        Math::Vector3d midB = (earth.position + moonB.position) * 0.5;
+        Vector3 midA = Vector3Scale(Vector3Add(earth.position, moonA.position), 0.5f);
+        Vector3 midB = Vector3Scale(Vector3Add(earth.position, moonB.position), 0.5f);
 
         // Convert midpoints to screen space
-        Vector2 screenMidA = GetWorldToScreen(MetersToWorld(midA.ToRaylibVector()), camera);
-        Vector2 screenMidB = GetWorldToScreen(MetersToWorld(midB.ToRaylibVector()), camera);
+        Vector2 screenMidA = GetWorldToScreen(MetersToWorld(midA), camera);
+        Vector2 screenMidB = GetWorldToScreen(MetersToWorld(midB), camera);
 
         // Format distance text
         char distTextA[64];
@@ -198,5 +210,6 @@ int main()
 
         EndDrawing();
     }
+
     TerminateWindow();
 }
