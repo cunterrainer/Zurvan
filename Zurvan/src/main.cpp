@@ -53,21 +53,6 @@ Vector3 MetersToWorld(Vector3 meters)
 }
 
 
-Math::Vector3d ComputeBarycenter(Physics::RigidBody<FLOAT>* bodies[], int count)
-{
-    double totalMass = 0.0;
-    Math::Vector3<FLOAT> weighted;
-
-    for (int i = 0; i < count; i++)
-    {
-        totalMass += bodies[i]->GetMass();
-        weighted += bodies[i]->GetPosition() * bodies[i]->GetMass();
-    }
-
-    return weighted * (1.0 / totalMass);
-}
-
-
 int main()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Zurvan");
@@ -144,7 +129,7 @@ int main()
         DrawLine3D(MetersToWorld(earth.GetPosition().ToRaylibVector()), MetersToWorld(moonB.GetPosition().ToRaylibVector()), RED);
 
         // Optional: show barycenter
-        Vector3 bary = MetersToWorld(ComputeBarycenter(bodies, 3).ToRaylibVector());
+        Vector3 bary = MetersToWorld(Physics::ComputeBarycenter(bodies, 3).ToRaylibVector());
         DrawSphere(bary, 10.0f, RED);
         EndMode3D();
 

@@ -9,13 +9,14 @@ namespace Physics
         const double G = 6.67430e-11;
     };
 
+
     template <typename T>
     struct RigidBody
     {
     private:
         Math::Vector3<T> m_Position;
         Math::Vector3<T> m_Velocity;
-        T m_Mass;
+        T m_Mass = static_cast<T>(0);
         Color color; // TODO: remove
     public:
         Math::Vector3<T> ComputeAcceleration(const RigidBody& other) const noexcept
@@ -79,4 +80,20 @@ namespace Physics
             return color;
         }
     };
+
+
+    template <typename T>
+    Math::Vector3<T> ComputeBarycenter(Physics::RigidBody<T>* bodies[], int count)
+    {
+        T totalMass = static_cast<T>(0);
+        Math::Vector3<T> weighted;
+
+        for (int i = 0; i < count; i++)
+        {
+            totalMass += bodies[i]->GetMass();
+            weighted += bodies[i]->GetPosition() * bodies[i]->GetMass();
+        }
+
+        return weighted * (static_cast<T>(1) / totalMass);
+    }
 }
