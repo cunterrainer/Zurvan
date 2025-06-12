@@ -123,5 +123,4 @@ project "Zurvan"
     filter { "configurations:Release" }
         kind "WindowedApp"
         entrypoint "mainCRTStartup"
-        floatingpoint "fast"
     filter {}

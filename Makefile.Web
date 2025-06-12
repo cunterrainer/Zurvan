@@ -24,7 +24,7 @@ ifeq ($(config),debug)
 endif
 
 ifeq ($(config),release)
-	CC_FLAGS = -O3 -ffast-math -ffunction-sections -fdata-sections
+	CC_FLAGS = -O3 -ffunction-sections -fdata-sections
 	LD_FLAGS = -flto -Wl,--gc-sections
 
 	RAYLIB_TARGET_DIR = BIN/emcc/release/raylib/bin
