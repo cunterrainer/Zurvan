@@ -14,8 +14,9 @@ const double MOON_MASS = 7.347e22;
 const double EARTH_MOON_DISTANCE = 384400000;
 const double MOON_SPEED = 1022;
 const double DISTANCE_SCALE = 1e6;       // 1 px = 1,000,000 meters
-#define TIME_SCALAR 20.0
+#define TIME_SCALAR 30.0
 const double TIME_STEP = 60 * 60 * TIME_SCALAR;        // 1 hour per frame
+using FLOAT = double;
 
 
 void Draw3DGridWithAxes(int size, float spacing)
@@ -52,15 +53,15 @@ Vector3 MetersToWorld(Vector3 meters)
 }
 
 
-Math::Vector3d ComputeBarycenter(Physics::RigidBody* bodies[], int count)
+Math::Vector3d ComputeBarycenter(Physics::RigidBody<double>* bodies[], int count)
 {
     double totalMass = 0.0;
     Math::Vector3d weighted;
 
     for (int i = 0; i < count; i++)
     {
-        totalMass += bodies[i]->mass;
-        weighted += bodies[i]->position * bodies[i]->mass;
+        totalMass += bodies[i]->GetMass();
+        weighted += bodies[i]->GetPosition() * bodies[i]->GetMass();
     }
 
     return weighted * (1.0 / totalMass);
@@ -69,7 +70,7 @@ Math::Vector3d ComputeBarycenter(Physics::RigidBody* bodies[], int count)
 
 int main()
 {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Earth + 2 Moons - 3D Free Camera");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Zurvan");
 
     // Camera setup
     Camera3D camera = { 0 };
@@ -79,23 +80,23 @@ int main()
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-    Physics::RigidBody earth;
-    earth.position = Math::Vector3d{ 0, 0, 0 };
-    earth.velocity = Math::Vector3d{ 0, 0, 0 };
-    earth.mass = EARTH_MASS;
-    earth.color = BLUE;
+    Physics::RigidBody<FLOAT> earth;
+    earth.SetPosition(0, 0, 0);
+    earth.SetVelocity(0, 0, 0);
+    earth.SetMass(EARTH_MASS);
+    earth.SetColor(BLUE);
 
-    Physics::RigidBody moonA;
-    moonA.position = Math::Vector3d{ (float)EARTH_MOON_DISTANCE, 0, 0 };
-    moonA.velocity = Math::Vector3d{ 0, 0, (float)MOON_SPEED };
-    moonA.mass = MOON_MASS;
-    moonA.color = LIGHTGRAY;
+    Physics::RigidBody<FLOAT> moonA;
+    moonA.SetPosition(EARTH_MOON_DISTANCE, 0, 0);
+    moonA.SetVelocity(0, 0, MOON_SPEED);
+    moonA.SetMass(MOON_MASS);
+    moonA.SetColor(LIGHTGRAY);
 
-    Physics::RigidBody moonB;
-    moonB.position = Math::Vector3d{ 0, 0, -300000000 };
-    moonB.velocity = Math::Vector3d{ 900, 0, 0 };
-    moonB.mass = MOON_MASS;
-    moonB.color = ORANGE;
+    Physics::RigidBody<FLOAT> moonB;
+    moonB.SetPosition(0, 0, -300000000);
+    moonB.SetVelocity(900, 0, 0);
+    moonB.SetMass(MOON_MASS);
+    moonB.SetColor(ORANGE);
 
     double elapsedTime = 0;
     DisableCursor();
@@ -103,14 +104,14 @@ int main()
     {
         elapsedTime += TIME_STEP * GetFrameTime();
         // Compute gravitational accelerations
-        Physics::RigidBody* bodies[] = { &earth, &moonA, &moonB };
+        Physics::RigidBody<FLOAT>* bodies[] = { &earth, &moonA, &moonB };
         Math::Vector3d accelerations[3];
 
         for (int i = 0; i < 3; i++) {
             Math::Vector3d acc;
             for (int j = 0; j < 3; j++) {
                 if (i != j) {
-                    Math::Vector3d a = ComputeAcceleration(bodies[i], bodies[j]);
+                    Math::Vector3d a = bodies[i]->ComputeAcceleration(*bodies[j]);
                     acc += a;
                 }
             }
@@ -120,8 +121,8 @@ int main()
         // Apply motion
         for (int i = 0; i < 3; i++)
         {
-            bodies[i]->velocity += accelerations[i] * (TIME_STEP * GetFrameTime());
-            bodies[i]->position += bodies[i]->velocity * (TIME_STEP * GetFrameTime());
+            bodies[i]->SetVelocity(bodies[i]->GetVelocity() + (accelerations[i] * (TIME_STEP * GetFrameTime())));
+            bodies[i]->SetPosition(bodies[i]->GetPosition() + (bodies[i]->GetVelocity() * (TIME_STEP * GetFrameTime())));
         }
 
         UpdateCamera(&camera, CAMERA_FREE);
@@ -134,13 +135,13 @@ int main()
         Draw3DGridWithAxes(100, 10.0f);
 
         for (int i = 0; i < 3; i++) {
-            Vector3 pos = MetersToWorld(bodies[i]->position.ToRaylibVector());
-            //float radius = (float)(2.0 + log10(bodies[i]->mass) - 21);
-            DrawSphere(pos, 10, bodies[i]->color);
+            Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector());
+            //float radius = (float)(2.0 + log10(bodies[i]->GetMass()) - 21);
+            DrawSphere(pos, 10, bodies[i]->GetColor());
         }
 
-        DrawLine3D(MetersToWorld(earth.position.ToRaylibVector()), MetersToWorld(moonA.position.ToRaylibVector()), RED);
-        DrawLine3D(MetersToWorld(earth.position.ToRaylibVector()), MetersToWorld(moonB.position.ToRaylibVector()), RED);
+        DrawLine3D(MetersToWorld(earth.GetPosition().ToRaylibVector()), MetersToWorld(moonA.GetPosition().ToRaylibVector()), RED);
+        DrawLine3D(MetersToWorld(earth.GetPosition().ToRaylibVector()), MetersToWorld(moonB.GetPosition().ToRaylibVector()), RED);
 
         // Optional: show barycenter
         Vector3 bary = MetersToWorld(ComputeBarycenter(bodies, 3).ToRaylibVector());
@@ -171,12 +172,12 @@ int main()
 
 
         // Compute distances (in meters)
-        double distA = earth.position.Distance(moonA.position);
-        double distB = earth.position.Distance(moonB.position);
+        double distA = earth.GetPosition().Distance(moonA.GetPosition());
+        double distB = earth.GetPosition().Distance(moonB.GetPosition());
 
         // Compute midpoints between Earth and each moon
-        Math::Vector3d midA = (earth.position + moonA.position) * 0.5;
-        Math::Vector3d midB = (earth.position + moonB.position) * 0.5;
+        Math::Vector3d midA = (earth.GetPosition() + moonA.GetPosition()) * 0.5;
+        Math::Vector3d midB = (earth.GetPosition() + moonB.GetPosition()) * 0.5;
 
         // Convert midpoints to screen space
         Vector2 screenMidA = GetWorldToScreen(MetersToWorld(midA.ToRaylibVector()), camera);
