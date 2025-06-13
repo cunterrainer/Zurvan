@@ -83,15 +83,15 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;
 
 
-    Physics::RigidBody<FLOAT> sun     = Physics::GeneratePlanet(                                 0.0,                            0.0, Physics::Const::SUN_MASS,     0.0, "Sun",     YELLOW);
-    Physics::RigidBody<FLOAT> earth   = Physics::GeneratePlanet(Physics::Const::EARTH_SUN_DISTANCE,   -Physics::Const::EARTH_SPEED,   Physics::Const::EARTH_MASS,   0.0, "Earth",   BLUE);
-    Physics::RigidBody<FLOAT> juptier = Physics::GeneratePlanet(Physics::Const::JUPTIER_SUN_DISTANCE, -Physics::Const::JUPTIER_SPEED, Physics::Const::JUPITER_MASS, 0.0, "Jupiter", BROWN);
-    Physics::RigidBody<FLOAT> mercury = Physics::GeneratePlanet(Physics::Const::MERCURY_SUN_DISTANCE, -Physics::Const::MERCURY_SPEED, Physics::Const::MERCURY_MASS, 0.0, "Mercury", GRAY);
-    Physics::RigidBody<FLOAT> venus   = Physics::GeneratePlanet(Physics::Const::VENUS_SUN_DISTANCE,   -Physics::Const::VENUS_SPEED,   Physics::Const::VENUS_MASS,   0.0, "Venus",   RED);
-    Physics::RigidBody<FLOAT> mars    = Physics::GeneratePlanet(Physics::Const::MARS_SUN_DISTANCE,    -Physics::Const::MARS_SPEED,    Physics::Const::MARS_MASS,    0.0, "Mars",    ORANGE);
-    Physics::RigidBody<FLOAT> saturn  = Physics::GeneratePlanet(Physics::Const::SATURN_SUN_DISTANCE,  -Physics::Const::SATURN_SPEED,  Physics::Const::SATURN_MASS,  0.0, "Saturn",  VIOLET);
-    Physics::RigidBody<FLOAT> uranus  = Physics::GeneratePlanet(Physics::Const::URANUS_SUN_DISTANCE,  -Physics::Const::URANUS_SPEED,  Physics::Const::URANUS_MASS,  0.0, "Uranus",  SKYBLUE);
-    Physics::RigidBody<FLOAT> neptun  = Physics::GeneratePlanet(Physics::Const::NEPTUN_SUN_DISTANCE,  -Physics::Const::NEPTUN_SPEED,  Physics::Const::NEPTUN_MASS,  0.0, "Neptun",  DARKBLUE);
+    Physics::RigidBody<FLOAT> sun     = Physics::GeneratePlanet(                                 0.0,                            0.0, Physics::Const::SUN_MASS,     Physics::Const::SUN_INCLINE,     "Sun",     YELLOW);
+    Physics::RigidBody<FLOAT> earth   = Physics::GeneratePlanet(Physics::Const::EARTH_SUN_DISTANCE,   -Physics::Const::EARTH_SPEED,   Physics::Const::EARTH_MASS,   Physics::Const::EARTH_INCLINE,   "Earth",   BLUE);
+    Physics::RigidBody<FLOAT> juptier = Physics::GeneratePlanet(Physics::Const::JUPTIER_SUN_DISTANCE, -Physics::Const::JUPTIER_SPEED, Physics::Const::JUPITER_MASS, Physics::Const::JUPTIER_INCLINE, "Jupiter", BROWN);
+    Physics::RigidBody<FLOAT> mercury = Physics::GeneratePlanet(Physics::Const::MERCURY_SUN_DISTANCE, -Physics::Const::MERCURY_SPEED, Physics::Const::MERCURY_MASS, Physics::Const::MERCURY_INCLINE, "Mercury", GRAY);
+    Physics::RigidBody<FLOAT> venus   = Physics::GeneratePlanet(Physics::Const::VENUS_SUN_DISTANCE,   -Physics::Const::VENUS_SPEED,   Physics::Const::VENUS_MASS,   Physics::Const::VENUS_INCLINE,   "Venus",   RED);
+    Physics::RigidBody<FLOAT> mars    = Physics::GeneratePlanet(Physics::Const::MARS_SUN_DISTANCE,    -Physics::Const::MARS_SPEED,    Physics::Const::MARS_MASS,    Physics::Const::MARS_INCLINE,    "Mars",    ORANGE);
+    Physics::RigidBody<FLOAT> saturn  = Physics::GeneratePlanet(Physics::Const::SATURN_SUN_DISTANCE,  -Physics::Const::SATURN_SPEED,  Physics::Const::SATURN_MASS,  Physics::Const::SATURN_INCLINE,  "Saturn",  VIOLET);
+    Physics::RigidBody<FLOAT> uranus  = Physics::GeneratePlanet(Physics::Const::URANUS_SUN_DISTANCE,  -Physics::Const::URANUS_SPEED,  Physics::Const::URANUS_MASS,  Physics::Const::URANUS_INCLINE,  "Uranus",  SKYBLUE);
+    Physics::RigidBody<FLOAT> neptun  = Physics::GeneratePlanet(Physics::Const::NEPTUN_SUN_DISTANCE,  -Physics::Const::NEPTUN_SPEED,  Physics::Const::NEPTUN_MASS,  Physics::Const::NEPTUN_INCLINE,  "Neptun",  DARKBLUE);
 
     std::vector<Physics::RigidBody<FLOAT>*> bodies;
     bodies.push_back(&sun);

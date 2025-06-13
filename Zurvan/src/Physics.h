@@ -12,39 +12,50 @@ namespace Physics
             Mass in KG
             Sun distance in meters
             Speed (around the sun) in meters per second
+            Incline (approximate orbital inclinations of the major planets relative to the ecliptic plane (the Earth's orbital plane)) in radians
         */
-        constexpr FLOAT SUN_MASS = static_cast<FLOAT>(1.988416e30);
-        constexpr FLOAT EARTH_MASS = static_cast<FLOAT>(5.972e24);
-        constexpr FLOAT EARTH_SUN_DISTANCE = static_cast<FLOAT>(149000000000);
-        constexpr FLOAT EARTH_SPEED = static_cast<FLOAT>(29722.2222);
+        constexpr FLOAT SUN_MASS             = static_cast<FLOAT>(1.988416e30);
+        constexpr FLOAT SUN_INCLINE          = static_cast<FLOAT>(0);
 
-        constexpr FLOAT JUPITER_MASS = static_cast<FLOAT>(1.89813e27);
-        constexpr FLOAT JUPTIER_SPEED = static_cast<FLOAT>(13000);
+        constexpr FLOAT EARTH_MASS           = static_cast<FLOAT>(5.972e24);
+        constexpr FLOAT EARTH_SUN_DISTANCE   = static_cast<FLOAT>(149000000000);
+        constexpr FLOAT EARTH_SPEED          = static_cast<FLOAT>(29722.2222);
+        constexpr FLOAT EARTH_INCLINE        = static_cast<FLOAT>(0);
+
+        constexpr FLOAT JUPITER_MASS         = static_cast<FLOAT>(1.89813e27);
+        constexpr FLOAT JUPTIER_SPEED        = static_cast<FLOAT>(13000);
         constexpr FLOAT JUPTIER_SUN_DISTANCE = static_cast<FLOAT>(778000000000);
+        constexpr FLOAT JUPTIER_INCLINE      = static_cast<FLOAT>(0.023);
 
-        constexpr FLOAT MERCURY_MASS = static_cast<FLOAT>(3.30104e23);
-        constexpr FLOAT MERCURY_SPEED = static_cast<FLOAT>(47870);
+        constexpr FLOAT MERCURY_MASS         = static_cast<FLOAT>(3.30104e23);
+        constexpr FLOAT MERCURY_SPEED        = static_cast<FLOAT>(47870);
         constexpr FLOAT MERCURY_SUN_DISTANCE = static_cast<FLOAT>(58000000000);
+        constexpr FLOAT MERCURY_INCLINE      = static_cast<FLOAT>(0.122);
 
-        constexpr FLOAT VENUS_MASS = static_cast<FLOAT>(4.867e24);
-        constexpr FLOAT VENUS_SPEED = static_cast<FLOAT>(35000);
-        constexpr FLOAT VENUS_SUN_DISTANCE = static_cast<FLOAT>(108000000000);
+        constexpr FLOAT VENUS_MASS           = static_cast<FLOAT>(4.867e24);
+        constexpr FLOAT VENUS_SPEED          = static_cast<FLOAT>(35000);
+        constexpr FLOAT VENUS_SUN_DISTANCE   = static_cast<FLOAT>(108000000000);
+        constexpr FLOAT VENUS_INCLINE        = static_cast<FLOAT>(0.059);
 
-        constexpr FLOAT MARS_MASS = static_cast<FLOAT>(6.39e23);
-        constexpr FLOAT MARS_SPEED = static_cast<FLOAT>(24100);
-        constexpr FLOAT MARS_SUN_DISTANCE = static_cast<FLOAT>(227900000000);
+        constexpr FLOAT MARS_MASS            = static_cast<FLOAT>(6.39e23);
+        constexpr FLOAT MARS_SPEED           = static_cast<FLOAT>(24100);
+        constexpr FLOAT MARS_SUN_DISTANCE    = static_cast<FLOAT>(227900000000);
+        constexpr FLOAT MARS_INCLINE         = static_cast<FLOAT>(0.032);
 
-        constexpr FLOAT SATURN_MASS = static_cast<FLOAT>(5.683e26);
-        constexpr FLOAT SATURN_SPEED = static_cast<FLOAT>(9672);
-        constexpr FLOAT SATURN_SUN_DISTANCE = static_cast<FLOAT>(1400000000000);
+        constexpr FLOAT SATURN_MASS          = static_cast<FLOAT>(5.683e26);
+        constexpr FLOAT SATURN_SPEED         = static_cast<FLOAT>(9672);
+        constexpr FLOAT SATURN_SUN_DISTANCE  = static_cast<FLOAT>(1400000000000);
+        constexpr FLOAT SATURN_INCLINE       = static_cast<FLOAT>(0.044);
 
-        constexpr FLOAT URANUS_MASS = static_cast<FLOAT>(8.681e25);
-        constexpr FLOAT URANUS_SPEED = static_cast<FLOAT>(6835);
-        constexpr FLOAT URANUS_SUN_DISTANCE = static_cast<FLOAT>(2900000000000);
+        constexpr FLOAT URANUS_MASS          = static_cast<FLOAT>(8.681e25);
+        constexpr FLOAT URANUS_SPEED         = static_cast<FLOAT>(6835);
+        constexpr FLOAT URANUS_SUN_DISTANCE  = static_cast<FLOAT>(2900000000000);
+        constexpr FLOAT URANUS_INCLINE       = static_cast<FLOAT>(0.013);
 
-        constexpr FLOAT NEPTUN_MASS = static_cast<FLOAT>(1.024e26);
-        constexpr FLOAT NEPTUN_SPEED = static_cast<FLOAT>(5430);
-        constexpr FLOAT NEPTUN_SUN_DISTANCE = static_cast<FLOAT>(4500000000000);
+        constexpr FLOAT NEPTUN_MASS          = static_cast<FLOAT>(1.024e26);
+        constexpr FLOAT NEPTUN_SPEED         = static_cast<FLOAT>(5430);
+        constexpr FLOAT NEPTUN_SUN_DISTANCE  = static_cast<FLOAT>(4500000000000);
+        constexpr FLOAT NEPTUN_INCLINE       = static_cast<FLOAT>(0.031);
     };
 
 
