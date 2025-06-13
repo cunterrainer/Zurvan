@@ -88,6 +88,11 @@ namespace Math
             return *this;
         }
 
+        constexpr Vector3 operator/(T scalar) const noexcept
+        {
+            return Vector3( x / scalar, y / scalar, z / scalar);
+        }
+
         ::Vector3 ToRaylibVector() const noexcept
         {
             ::Vector3 r;
