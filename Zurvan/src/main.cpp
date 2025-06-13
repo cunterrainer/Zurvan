@@ -176,8 +176,8 @@ int main()
     {
         auto start = std::chrono::high_resolution_clock::now();
         //Physics::VelocityVerlet(bodies, TIME_STEP, GetFrameTime());
-        Physics::RungeKutta4th(bodies, TIME_STEP, GetFrameTime());
-        //Physics::EulerIntegration(bodies, TIME_STEP, GetFrameTime());
+        //Physics::RungeKutta4th(bodies, TIME_STEP, GetFrameTime());
+        Physics::EulerIntegration(bodies, TIME_STEP, GetFrameTime());
 
         auto end = std::chrono::high_resolution_clock::now();
         auto elapsed_ms = std::chrono::duration<double, std::milli>(end - start).count();
@@ -227,6 +227,11 @@ int main()
         for (size_t i = 0; i < bodies.size(); i++) {
             // Get their 3D position
             Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector());
+            Matrix cameraMatrix = GetCameraMatrix(camera);
+            Vector4 cameraSpace = Vector4{ pos.x, pos.y, pos.z, 1.0f } * cameraMatrix;
+
+            if (cameraSpace.z > 0)
+                continue;
 
             // Transform to 2D screen coordinates
             Vector2 screenPos = GetWorldToScreen(pos, camera);
@@ -258,7 +263,7 @@ int main()
             GetScreenHeight() / 2.0f
         };
         DrawCircle(GetScreenWidth() / 2, GetScreenHeight() / 2, 1, WHITE);
-        Ray ray = GetMouseRay(center, camera);
+        Ray ray = GetScreenToWorldRay(center, camera);
 
         for (size_t i = 0; i < bodies.size(); i++)
         {
