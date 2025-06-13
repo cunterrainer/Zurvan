@@ -82,80 +82,16 @@ int main()
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-    Physics::RigidBody<FLOAT> sun;
-    sun.SetPosition(0, 0, 0);
-    sun.SetVelocity(0, 0, 0);
-    sun.SetMass(Physics::Const::SUN_MASS);
-    sun.SetColor(YELLOW);
-    sun.SetLabel("Sun");
 
-    Physics::RigidBody<FLOAT> earth;
-    earth.SetPosition(Physics::Const::EARTH_SUN_DISTANCE, 0, 0);
-    earth.SetVelocity(0, 0, -Physics::Const::EARTH_SPEED);
-    earth.SetMass(Physics::Const::EARTH_MASS);
-    earth.SetColor(BLUE);
-    earth.SetLabel("Earth");
-
-    Physics::RigidBody<FLOAT> juptier;
-    juptier.SetPosition(Physics::Const::JUPTIER_SUN_DISTANCE, 0, 0);
-    juptier.SetVelocity(0, 0, -Physics::Const::JUPTIER_SPEED);
-    juptier.SetMass(Physics::Const::JUPITER_MASS);
-    juptier.SetColor(BROWN);
-    juptier.SetLabel("Jupiter");
-
-    Physics::RigidBody<FLOAT> mercury;
-    mercury.SetPosition(Physics::Const::MERCURY_SUN_DISTANCE, 0, 0);
-    mercury.SetVelocity(0, 0, -Physics::Const::MERCURY_SPEED);
-    mercury.SetMass(Physics::Const::MERCURY_MASS);
-    mercury.SetColor(GRAY);
-    mercury.SetLabel("Mercury");
-
-    Physics::RigidBody<FLOAT> venus;
-    venus.SetPosition(Physics::Const::VENUS_SUN_DISTANCE, 0, 0);
-    venus.SetVelocity(0, 0, -Physics::Const::VENUS_SPEED);
-    venus.SetMass(Physics::Const::VENUS_MASS);
-    venus.SetColor(RED);
-    venus.SetLabel("Venus");
-
-    Physics::RigidBody<FLOAT> mars;
-    mars.SetPosition(Physics::Const::MARS_SUN_DISTANCE, 0, 0);
-    mars.SetVelocity(0, 0, -Physics::Const::MARS_SPEED);
-    mars.SetMass(Physics::Const::MARS_MASS);
-    mars.SetColor(ORANGE);
-    mars.SetLabel("Mars");
-
-    Physics::RigidBody<FLOAT> saturn;
-    saturn.SetPosition(Physics::Const::SATURN_SUN_DISTANCE, 0, 0);
-    saturn.SetVelocity(0, 0, -Physics::Const::SATURN_SPEED);
-    saturn.SetMass(Physics::Const::SATURN_MASS);
-    saturn.SetColor(VIOLET);
-    saturn.SetLabel("Saturn");
-
-    Physics::RigidBody<FLOAT> uranus;
-    uranus.SetPosition(Physics::Const::URANUS_SUN_DISTANCE, 0, 0);
-    uranus.SetVelocity(0, 0, -Physics::Const::URANUS_SPEED);
-    uranus.SetMass(Physics::Const::URANUS_MASS);
-    uranus.SetColor(SKYBLUE);
-    uranus.SetLabel("Uranus");
-
-    Physics::RigidBody<FLOAT> neptun;
-    neptun.SetPosition(Physics::Const::NEPTUN_SUN_DISTANCE, 0, 0);
-    neptun.SetVelocity(0, 0, -Physics::Const::NEPTUN_SPEED);
-    neptun.SetMass(Physics::Const::NEPTUN_MASS);
-    neptun.SetColor(DARKBLUE);
-    neptun.SetLabel("Neptun");
-
-    //Physics::RigidBody<FLOAT> moonA;
-    //moonA.SetPosition(Physics::Const::EARTH_SUN_DISTANCE + EARTH_MOON_DISTANCE, 0, 0);
-    //moonA.SetVelocity(0, 0, MOON_SPEED);
-    //moonA.SetMass(MOON_MASS);
-    //moonA.SetColor(LIGHTGRAY);
-
-    //Physics::RigidBody<FLOAT> moonB;
-    //moonB.SetPosition(0, 0, -300000000);
-    //moonB.SetVelocity(900, 0, 0);
-    //moonB.SetMass(MOON_MASS);
-    //moonB.SetColor(ORANGE);
+    Physics::RigidBody<FLOAT> sun     = Physics::GeneratePlanet(                                 0.0,                            0.0, Physics::Const::SUN_MASS,     0.0, "Sun",     YELLOW);
+    Physics::RigidBody<FLOAT> earth   = Physics::GeneratePlanet(Physics::Const::EARTH_SUN_DISTANCE,   -Physics::Const::EARTH_SPEED,   Physics::Const::EARTH_MASS,   0.0, "Earth",   BLUE);
+    Physics::RigidBody<FLOAT> juptier = Physics::GeneratePlanet(Physics::Const::JUPTIER_SUN_DISTANCE, -Physics::Const::JUPTIER_SPEED, Physics::Const::JUPITER_MASS, 0.0, "Jupiter", BROWN);
+    Physics::RigidBody<FLOAT> mercury = Physics::GeneratePlanet(Physics::Const::MERCURY_SUN_DISTANCE, -Physics::Const::MERCURY_SPEED, Physics::Const::MERCURY_MASS, 0.0, "Mercury", GRAY);
+    Physics::RigidBody<FLOAT> venus   = Physics::GeneratePlanet(Physics::Const::VENUS_SUN_DISTANCE,   -Physics::Const::VENUS_SPEED,   Physics::Const::VENUS_MASS,   0.0, "Venus",   RED);
+    Physics::RigidBody<FLOAT> mars    = Physics::GeneratePlanet(Physics::Const::MARS_SUN_DISTANCE,    -Physics::Const::MARS_SPEED,    Physics::Const::MARS_MASS,    0.0, "Mars",    ORANGE);
+    Physics::RigidBody<FLOAT> saturn  = Physics::GeneratePlanet(Physics::Const::SATURN_SUN_DISTANCE,  -Physics::Const::SATURN_SPEED,  Physics::Const::SATURN_MASS,  0.0, "Saturn",  VIOLET);
+    Physics::RigidBody<FLOAT> uranus  = Physics::GeneratePlanet(Physics::Const::URANUS_SUN_DISTANCE,  -Physics::Const::URANUS_SPEED,  Physics::Const::URANUS_MASS,  0.0, "Uranus",  SKYBLUE);
+    Physics::RigidBody<FLOAT> neptun  = Physics::GeneratePlanet(Physics::Const::NEPTUN_SUN_DISTANCE,  -Physics::Const::NEPTUN_SPEED,  Physics::Const::NEPTUN_MASS,  0.0, "Neptun",  DARKBLUE);
 
     std::vector<Physics::RigidBody<FLOAT>*> bodies;
     bodies.push_back(&sun);

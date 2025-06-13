@@ -147,6 +147,27 @@ namespace Physics
     }
 
 
+    template <typename T>
+    RigidBody<T> GeneratePlanet(T distanceToSun, T speedAroundSun, T mass, double inclination, const char* name, Color color)
+    {
+        Physics::RigidBody<T> body;
+        const T x = distanceToSun;
+        const T y = distanceToSun * static_cast<T>(std::sin(inclination));
+        const T z = 0;
+        body.SetPosition(x, y, z);
+
+        const T vx = 0;
+        const T vy = speedAroundSun * static_cast<T>(std::sin(inclination));
+        const T vz = speedAroundSun * static_cast<T>(std::cos(inclination));
+        body.SetVelocity(vx, vy, vz);
+
+        body.SetMass(mass);
+        body.SetColor(color);
+        body.SetLabel(name);
+        return body;
+    }
+
+
     void EulerIntegration(const std::vector<Physics::RigidBody<FLOAT>*>& bodies, double timeStep, float dt) noexcept
     {
         for (size_t i = 0; i < bodies.size(); ++i)
