@@ -7,6 +7,19 @@
 namespace Math
 {
     template <typename T>
+    T Sqrt(T x) noexcept
+    {
+        if constexpr (std::is_same_v<T, float>)
+            return std::sqrtf(x);
+        else if constexpr (std::is_same_v<T, double>)
+            return std::sqrt(x);
+        else if constexpr (std::is_same_v<T, long double>)
+            return std::sqrtl(x);
+        else
+            static_assert(std::is_floating_point_v<T>, "Unsupported type for Math::Sqrt");
+    }
+
+    template <typename T>
     class Vector3
     {
     private:
@@ -85,18 +98,4 @@ namespace Math
         }
     };
     using Vector3d = Math::Vector3<double>;
-
-
-    template <typename T>
-    T Sqrt(T x) noexcept
-    {
-        if constexpr (std::is_same_v<T, float>)
-            return std::sqrtf(x);
-        else if constexpr (std::is_same_v<T, double>)
-            return std::sqrt(x);
-        else if constexpr (std::is_same_v<T, long double>)
-            return std::sqrtl(x);
-        else
-            static_assert(std::is_floating_point_v<T>, "Unsupported type for Math::Sqrt");
-    }
 }
