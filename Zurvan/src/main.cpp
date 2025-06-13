@@ -5,8 +5,12 @@
     to 5000.0 via custom projection matrix in our rendering code.
 */
 
+#include <ctime>
 #include <cstdio>
 #include <vector>
+#include <chrono>
+#include <thread>
+#include <iostream>
 
 #include "raylib.h"
 
@@ -22,7 +26,7 @@ using FLOAT = double;
 //const double MOON_SPEED = 1022; // meters per second
 
 const double DISTANCE_SCALE = 1e9; // 1 px = 1,000,000,000 meters
-#define TIME_SCALAR 10000.0
+#define TIME_SCALAR 1000.0
 const double TIME_STEP = 60 * 60 * TIME_SCALAR;        // 1 hour per frame
 
 
@@ -114,12 +118,12 @@ int main()
     saturn.SetVelocity(0, 0, Physics::Const::SATURN_SPEED);
     saturn.SetMass(Physics::Const::SATURN_MASS);
     saturn.SetColor(VIOLET);
-
     Physics::RigidBody<FLOAT> uranus;
     uranus.SetPosition(Physics::Const::URANUS_SUN_DISTANCE, 0, 0);
     uranus.SetVelocity(0, 0, Physics::Const::URANUS_SPEED);
     uranus.SetMass(Physics::Const::URANUS_MASS);
     uranus.SetColor(SKYBLUE);
+
 
     Physics::RigidBody<FLOAT> neptun;
     neptun.SetPosition(Physics::Const::NEPTUN_SUN_DISTANCE, 0, 0);
@@ -156,9 +160,13 @@ int main()
     DisableCursor();
     while (!WindowShouldClose())
     {
+        auto start = std::chrono::high_resolution_clock::now();
         //Physics::VelocityVerlet(bodies, TIME_STEP, GetFrameTime());
-        Physics::RungeKutta4th(bodies, TIME_STEP, GetFrameTime());
-        //Physics::EulerIntegration(bodies, TIME_STEP, GetFrameTime());
+        //Physics::RungeKutta4th(bodies, TIME_STEP, GetFrameTime());
+        Physics::EulerIntegration(bodies, TIME_STEP, GetFrameTime());
+
+        auto end = std::chrono::high_resolution_clock::now();
+        auto elapsed_ms = std::chrono::duration<double, std::milli>(end - start).count();
 
         UpdateCameraOverride(&camera, CAMERA_FREE);
 
@@ -203,9 +211,11 @@ int main()
         elapsedTime += TIME_STEP * GetFrameTime();
         double daysPassed = elapsedTime / (60.0 * 60.0 * 24.0);  // seconds to days
         char dayText[64];
-        sprintf_s(dayText, 64, "Days passed: %.2f", daysPassed);
+        snprintf(dayText, 64, "Days passed: %.2f", daysPassed);
         DrawText(dayText, 10, 40, 20, WHITE);
 
+        snprintf(dayText, 64, "Simulation time: %.4f ms", elapsed_ms);
+        DrawText(dayText, 10, 60, 20, WHITE);
 
         // Compute distances (in meters)
         //double distA = earth.GetPosition().Distance(moonA.GetPosition());
