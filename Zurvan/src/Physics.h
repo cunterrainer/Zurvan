@@ -55,6 +55,7 @@ namespace Physics
         Math::Vector3<T> m_Position;
         Math::Vector3<T> m_Velocity;
         T m_Mass = static_cast<T>(0);
+        const char* m_Label = "";
         Color color; // TODO: remove
     public:
         Math::Vector3<T> ComputeAcceleration(const RigidBody& other) const noexcept
@@ -93,6 +94,11 @@ namespace Physics
             m_Mass = m;
         }
 
+        void SetLabel(const char* label) noexcept
+        {
+            m_Label = label;
+        }
+
         constexpr const Math::Vector3<T>& GetVelocity() const noexcept
         {
             return m_Velocity;
@@ -106,6 +112,11 @@ namespace Physics
         constexpr T GetMass() const noexcept
         {
             return m_Mass;
+        }
+
+        constexpr const char* GetLabel() const noexcept
+        {
+            return m_Label;
         }
 
         void SetColor(Color c)

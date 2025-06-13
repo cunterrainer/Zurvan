@@ -24,7 +24,7 @@ namespace Math
     {
     private:
         static_assert(std::is_floating_point_v<T>, "Unsupported type for Math::Vector3");
-    private:
+    public:
         T x;
         T y;
         T z;
