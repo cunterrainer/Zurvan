@@ -5,6 +5,7 @@
 
 using FLOAT = double;
 #include "Math.h"
+#include "Camera.h"
 #include "Physics.h"
 
 #define SCREEN_WIDTH 1280
@@ -152,7 +153,7 @@ int main()
         Physics::RungeKutta4th(bodies, TIME_STEP, GetFrameTime());
         //Physics::EulerIntegration(bodies, TIME_STEP, GetFrameTime());
 
-        UpdateCamera(&camera, CAMERA_FREE);
+        UpdateCameraOverride(&camera, CAMERA_FREE);
 
         // Draw
         BeginDrawing();
@@ -161,7 +162,7 @@ int main()
         // Draw coordinate axes
         Draw3DGridWithAxes(100, 30.0f);
 
-        for (int i = 0; i < bodies.size(); i++) {
+        for (size_t i = 0; i < bodies.size(); i++) {
             Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector());
             //float radius = (float)(2.0 + log10(bodies[i]->GetMass()) - 21);
             DrawSphere(pos, 10, bodies[i]->GetColor());
@@ -227,5 +228,5 @@ int main()
 
         EndDrawing();
     }
-    //CloseWindow();
+    TerminateWindow();
 }
