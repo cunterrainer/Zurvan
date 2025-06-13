@@ -23,8 +23,12 @@ void UpdateCameraOverride(Camera* camera, int mode)
     const bool lockView = ((mode == CAMERA_FREE) || (mode == CAMERA_FIRST_PERSON) || (mode == CAMERA_THIRD_PERSON) || (mode == CAMERA_ORBITAL));
     const bool rotateUp = false;
 
+    float cameraMoveSpeedAcceleration = 1.f;
+    if (IsKeyDown(KEY_LEFT_CONTROL))
+        cameraMoveSpeedAcceleration = 4.f;
+
     // Camera speeds based on frame time
-    const float cameraMoveSpeed = CameraConst::MoveSpeed * GetFrameTime();
+    const float cameraMoveSpeed = CameraConst::MoveSpeed * GetFrameTime() * cameraMoveSpeedAcceleration;
     const float cameraRotationSpeed = CameraConst::RotationSpeed * GetFrameTime();
     const float cameraPanSpeed = CameraConst::PanSpeed * GetFrameTime();
     const float cameraOrbitalSpeed = CameraConst::OrbitalSpeed * GetFrameTime();
