@@ -13,49 +13,59 @@ namespace Physics
             Sun distance in meters
             Speed (around the sun) in meters per second
             Incline (approximate orbital inclinations of the major planets relative to the ecliptic plane (the Earth's orbital plane)) in radians
+            Radius in meters
         */
         constexpr FLOAT SUN_MASS             = static_cast<FLOAT>(1.988416e30);
         constexpr FLOAT SUN_INCLINE          = static_cast<FLOAT>(0);
+        constexpr FLOAT SUN_RADIUS           = static_cast<FLOAT>(696265000);
 
         constexpr FLOAT EARTH_MASS           = static_cast<FLOAT>(5.972e24);
         constexpr FLOAT EARTH_SUN_DISTANCE   = static_cast<FLOAT>(149000000000);
         constexpr FLOAT EARTH_SPEED          = static_cast<FLOAT>(29722.2222);
         constexpr FLOAT EARTH_INCLINE        = static_cast<FLOAT>(0);
+        constexpr FLOAT EARTH_RADIUS         = static_cast<FLOAT>(6378000);
 
         constexpr FLOAT JUPITER_MASS         = static_cast<FLOAT>(1.89813e27);
         constexpr FLOAT JUPTIER_SPEED        = static_cast<FLOAT>(13000);
         constexpr FLOAT JUPTIER_SUN_DISTANCE = static_cast<FLOAT>(778000000000);
         constexpr FLOAT JUPTIER_INCLINE      = static_cast<FLOAT>(0.023);
+        constexpr FLOAT JUPITER_RADIUS       = static_cast<FLOAT>(69911000);
 
         constexpr FLOAT MERCURY_MASS         = static_cast<FLOAT>(3.30104e23);
         constexpr FLOAT MERCURY_SPEED        = static_cast<FLOAT>(47870);
         constexpr FLOAT MERCURY_SUN_DISTANCE = static_cast<FLOAT>(58000000000);
         constexpr FLOAT MERCURY_INCLINE      = static_cast<FLOAT>(0.122);
+        constexpr FLOAT MERCURY_RADIUS       = static_cast<FLOAT>(2439700);
 
         constexpr FLOAT VENUS_MASS           = static_cast<FLOAT>(4.867e24);
         constexpr FLOAT VENUS_SPEED          = static_cast<FLOAT>(35000);
         constexpr FLOAT VENUS_SUN_DISTANCE   = static_cast<FLOAT>(108000000000);
         constexpr FLOAT VENUS_INCLINE        = static_cast<FLOAT>(0.059);
+        constexpr FLOAT VENUS_RADIUS         = static_cast<FLOAT>(6051800);
 
         constexpr FLOAT MARS_MASS            = static_cast<FLOAT>(6.39e23);
         constexpr FLOAT MARS_SPEED           = static_cast<FLOAT>(24100);
         constexpr FLOAT MARS_SUN_DISTANCE    = static_cast<FLOAT>(227900000000);
         constexpr FLOAT MARS_INCLINE         = static_cast<FLOAT>(0.032);
+        constexpr FLOAT MARS_RADIUS          = static_cast<FLOAT>(3389500);
 
         constexpr FLOAT SATURN_MASS          = static_cast<FLOAT>(5.683e26);
         constexpr FLOAT SATURN_SPEED         = static_cast<FLOAT>(9672);
         constexpr FLOAT SATURN_SUN_DISTANCE  = static_cast<FLOAT>(1400000000000);
         constexpr FLOAT SATURN_INCLINE       = static_cast<FLOAT>(0.044);
+        constexpr FLOAT SATURN_RADIUS        = static_cast<FLOAT>(58232000);
 
         constexpr FLOAT URANUS_MASS          = static_cast<FLOAT>(8.681e25);
         constexpr FLOAT URANUS_SPEED         = static_cast<FLOAT>(6835);
         constexpr FLOAT URANUS_SUN_DISTANCE  = static_cast<FLOAT>(2900000000000);
         constexpr FLOAT URANUS_INCLINE       = static_cast<FLOAT>(0.013);
+        constexpr FLOAT URANUS_RADIUS        = static_cast<FLOAT>(25362000);
 
         constexpr FLOAT NEPTUN_MASS          = static_cast<FLOAT>(1.024e26);
         constexpr FLOAT NEPTUN_SPEED         = static_cast<FLOAT>(5430);
         constexpr FLOAT NEPTUN_SUN_DISTANCE  = static_cast<FLOAT>(4500000000000);
         constexpr FLOAT NEPTUN_INCLINE       = static_cast<FLOAT>(0.031);
+        constexpr FLOAT NEPTUN_RADIUS        = static_cast<FLOAT>(24622000);
     };
 
 
@@ -66,8 +76,6 @@ namespace Physics
         Math::Vector3<T> m_Position;
         Math::Vector3<T> m_Velocity;
         T m_Mass = static_cast<T>(0);
-        const char* m_Label = "";
-        Color color; // TODO: remove
     public:
         Math::Vector3<T> ComputeAcceleration(const RigidBody& other) const noexcept
         {
@@ -105,11 +113,6 @@ namespace Physics
             m_Mass = m;
         }
 
-        void SetLabel(const char* label) noexcept
-        {
-            m_Label = label;
-        }
-
         constexpr const Math::Vector3<T>& GetVelocity() const noexcept
         {
             return m_Velocity;
@@ -125,20 +128,51 @@ namespace Physics
             return m_Mass;
         }
 
-        constexpr const char* GetLabel() const noexcept
+        virtual Color GetColor() const noexcept = 0;
+        virtual double GetRadius() const noexcept = 0;
+        virtual const char* GetLabel() const noexcept = 0;
+    };
+
+
+    class Planet : public RigidBody<FLOAT>
+    {
+    private:
+        double m_Radius = 0.0;
+        double m_Inclination = 0.0;
+        const char* m_Name = nullptr;
+        Color m_Color = WHITE;
+    public:
+        Planet(FLOAT distanceToSun, FLOAT speedAroundSun, FLOAT mass, double radius, double inclination, const char* name, Color color)
+            : m_Radius(radius), m_Inclination(inclination), m_Name(name), m_Color(color)
         {
-            return m_Label;
+            const FLOAT x = distanceToSun;
+            const FLOAT y = distanceToSun * static_cast<FLOAT>(std::sin(inclination));
+            const FLOAT z = 0;
+            SetPosition(x, y, z);
+
+            const FLOAT vx = 0;
+            const FLOAT vy = speedAroundSun * static_cast<FLOAT>(std::sin(inclination));
+            const FLOAT vz = speedAroundSun * static_cast<FLOAT>(std::cos(inclination));
+            SetVelocity(vx, vy, vz);
+
+            SetMass(mass);
         }
 
-        void SetColor(Color c)
+        Color GetColor() const noexcept
         {
-            color = c;
+            return m_Color;
         }
 
-        Color GetColor()
+        double GetRadius() const noexcept
         {
-            return color;
+            return m_Radius;
         }
+
+        const char* GetLabel() const noexcept
+        {
+            return m_Name;
+        }
+
     };
 
 
@@ -155,27 +189,6 @@ namespace Physics
         }
 
         return weighted * (static_cast<T>(1) / totalMass);
-    }
-
-
-    template <typename T>
-    RigidBody<T> GeneratePlanet(T distanceToSun, T speedAroundSun, T mass, double inclination, const char* name, Color color)
-    {
-        Physics::RigidBody<T> body;
-        const T x = distanceToSun;
-        const T y = distanceToSun * static_cast<T>(std::sin(inclination));
-        const T z = 0;
-        body.SetPosition(x, y, z);
-
-        const T vx = 0;
-        const T vy = speedAroundSun * static_cast<T>(std::sin(inclination));
-        const T vz = speedAroundSun * static_cast<T>(std::cos(inclination));
-        body.SetVelocity(vx, vy, vz);
-
-        body.SetMass(mass);
-        body.SetColor(color);
-        body.SetLabel(name);
-        return body;
     }
 
 

@@ -42,13 +42,13 @@ void Draw3DGridWithAxes(int size, float spacing)
         DrawLine3D({ i * spacing, 0, -size * spacing }, { i * spacing, 0, size * spacing }, Fade(DARKGRAY, 0.3f));
         DrawLine3D({ -size * spacing, 0, i * spacing }, { size * spacing, 0, i * spacing }, Fade(DARKGRAY, 0.3f));
 
-        // XY plane (Z=0)
-        DrawLine3D({ i * spacing, -size * spacing, 0 }, { i * spacing, size * spacing, 0 }, Fade(DARKGRAY, 0.3f));
-        DrawLine3D({ -size * spacing, i * spacing, 0 }, { size * spacing, i * spacing, 0 }, Fade(DARKGRAY, 0.3f));
-
-        // YZ plane (X=0)
-        DrawLine3D({ 0, i * spacing, -size * spacing }, Vector3{ 0, i * spacing, size * spacing }, Fade(DARKGRAY, 0.3f));
-        DrawLine3D({ 0, -size * spacing, i * spacing }, Vector3{ 0, size * spacing, i * spacing }, Fade(DARKGRAY, 0.3f));
+        //// XY plane (Z=0)
+        //DrawLine3D({ i * spacing, -size * spacing, 0 }, { i * spacing, size * spacing, 0 }, Fade(DARKGRAY, 0.3f));
+        //DrawLine3D({ -size * spacing, i * spacing, 0 }, { size * spacing, i * spacing, 0 }, Fade(DARKGRAY, 0.3f));
+        //
+        //// YZ plane (X=0)
+        //DrawLine3D({ 0, i * spacing, -size * spacing }, Vector3{ 0, i * spacing, size * spacing }, Fade(DARKGRAY, 0.3f));
+        //DrawLine3D({ 0, -size * spacing, i * spacing }, Vector3{ 0, size * spacing, i * spacing }, Fade(DARKGRAY, 0.3f));
     }
 
     // Draw axis lines
@@ -67,6 +67,12 @@ Vector3 MetersToWorld(Vector3 meters)
 }
 
 
+double MetersToWorld(double meters)
+{
+    return meters / DISTANCE_SCALE;
+}
+
+
 int main()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Zurvan");
@@ -82,16 +88,15 @@ int main()
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-
-    Physics::RigidBody<FLOAT> sun     = Physics::GeneratePlanet(                                 0.0,                            0.0, Physics::Const::SUN_MASS,     Physics::Const::SUN_INCLINE,     "Sun",     YELLOW);
-    Physics::RigidBody<FLOAT> earth   = Physics::GeneratePlanet(Physics::Const::EARTH_SUN_DISTANCE,   -Physics::Const::EARTH_SPEED,   Physics::Const::EARTH_MASS,   Physics::Const::EARTH_INCLINE,   "Earth",   BLUE);
-    Physics::RigidBody<FLOAT> juptier = Physics::GeneratePlanet(Physics::Const::JUPTIER_SUN_DISTANCE, -Physics::Const::JUPTIER_SPEED, Physics::Const::JUPITER_MASS, Physics::Const::JUPTIER_INCLINE, "Jupiter", BROWN);
-    Physics::RigidBody<FLOAT> mercury = Physics::GeneratePlanet(Physics::Const::MERCURY_SUN_DISTANCE, -Physics::Const::MERCURY_SPEED, Physics::Const::MERCURY_MASS, Physics::Const::MERCURY_INCLINE, "Mercury", GRAY);
-    Physics::RigidBody<FLOAT> venus   = Physics::GeneratePlanet(Physics::Const::VENUS_SUN_DISTANCE,   -Physics::Const::VENUS_SPEED,   Physics::Const::VENUS_MASS,   Physics::Const::VENUS_INCLINE,   "Venus",   RED);
-    Physics::RigidBody<FLOAT> mars    = Physics::GeneratePlanet(Physics::Const::MARS_SUN_DISTANCE,    -Physics::Const::MARS_SPEED,    Physics::Const::MARS_MASS,    Physics::Const::MARS_INCLINE,    "Mars",    ORANGE);
-    Physics::RigidBody<FLOAT> saturn  = Physics::GeneratePlanet(Physics::Const::SATURN_SUN_DISTANCE,  -Physics::Const::SATURN_SPEED,  Physics::Const::SATURN_MASS,  Physics::Const::SATURN_INCLINE,  "Saturn",  VIOLET);
-    Physics::RigidBody<FLOAT> uranus  = Physics::GeneratePlanet(Physics::Const::URANUS_SUN_DISTANCE,  -Physics::Const::URANUS_SPEED,  Physics::Const::URANUS_MASS,  Physics::Const::URANUS_INCLINE,  "Uranus",  SKYBLUE);
-    Physics::RigidBody<FLOAT> neptun  = Physics::GeneratePlanet(Physics::Const::NEPTUN_SUN_DISTANCE,  -Physics::Const::NEPTUN_SPEED,  Physics::Const::NEPTUN_MASS,  Physics::Const::NEPTUN_INCLINE,  "Neptun",  DARKBLUE);
+    Physics::Planet sun    (                                 0.0,                            0.0, Physics::Const::SUN_MASS,     Physics::Const::SUN_RADIUS,     Physics::Const::SUN_INCLINE,     "Sun",     YELLOW);
+    Physics::Planet earth  (Physics::Const::EARTH_SUN_DISTANCE,   -Physics::Const::EARTH_SPEED,   Physics::Const::EARTH_MASS,   Physics::Const::EARTH_RADIUS,   Physics::Const::EARTH_INCLINE,   "Earth",   BLUE);
+    Physics::Planet juptier(Physics::Const::JUPTIER_SUN_DISTANCE, -Physics::Const::JUPTIER_SPEED, Physics::Const::JUPITER_MASS, Physics::Const::JUPITER_RADIUS, Physics::Const::JUPTIER_INCLINE, "Jupiter", BROWN);
+    Physics::Planet mercury(Physics::Const::MERCURY_SUN_DISTANCE, -Physics::Const::MERCURY_SPEED, Physics::Const::MERCURY_MASS, Physics::Const::MERCURY_RADIUS, Physics::Const::MERCURY_INCLINE, "Mercury", GRAY);
+    Physics::Planet venus  (Physics::Const::VENUS_SUN_DISTANCE,   -Physics::Const::VENUS_SPEED,   Physics::Const::VENUS_MASS,   Physics::Const::VENUS_RADIUS,   Physics::Const::VENUS_INCLINE,   "Venus",   RED);
+    Physics::Planet mars   (Physics::Const::MARS_SUN_DISTANCE,    -Physics::Const::MARS_SPEED,    Physics::Const::MARS_MASS,    Physics::Const::MARS_RADIUS,    Physics::Const::MARS_INCLINE,    "Mars",    ORANGE);
+    Physics::Planet saturn (Physics::Const::SATURN_SUN_DISTANCE,  -Physics::Const::SATURN_SPEED,  Physics::Const::SATURN_MASS,  Physics::Const::SATURN_RADIUS,  Physics::Const::SATURN_INCLINE,  "Saturn",  VIOLET);
+    Physics::Planet uranus (Physics::Const::URANUS_SUN_DISTANCE,  -Physics::Const::URANUS_SPEED,  Physics::Const::URANUS_MASS,  Physics::Const::URANUS_RADIUS,  Physics::Const::URANUS_INCLINE,  "Uranus",  SKYBLUE);
+    Physics::Planet neptun (Physics::Const::NEPTUN_SUN_DISTANCE,  -Physics::Const::NEPTUN_SPEED,  Physics::Const::NEPTUN_MASS,  Physics::Const::NEPTUN_RADIUS,  Physics::Const::NEPTUN_INCLINE,  "Neptun",  DARKBLUE);
 
     std::vector<Physics::RigidBody<FLOAT>*> bodies;
     bodies.push_back(&sun);
@@ -103,8 +108,6 @@ int main()
     bodies.push_back(&saturn);
     bodies.push_back(&uranus);
     bodies.push_back(&neptun);
-    //bodies.push_back(&moonA);
-    //bodies.push_back(&moonB);
 
     double elapsedTime = 0;
     DisableCursor();
@@ -132,9 +135,10 @@ int main()
         Draw3DGridWithAxes(100, 30.0f);
 
         for (size_t i = 0; i < bodies.size(); i++) {
+
             Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector());
             //float radius = (float)(2.0 + log10(bodies[i]->GetMass()) - 21);
-            DrawSphere(pos, 10, bodies[i]->GetColor());
+            DrawSphere(pos, (bodies[i]->GetRadius() / DISTANCE_SCALE) * 500, bodies[i]->GetColor());
         }
 
         //DrawLine3D(MetersToWorld(earth.GetPosition().ToRaylibVector()), MetersToWorld(moonA.GetPosition().ToRaylibVector()), RED);
@@ -247,6 +251,9 @@ int main()
 
             snprintf(dayText, 64, "Mass: %e KG", stats->GetMass());
             DrawText(dayText, 10, 240, 20, WHITE);
+
+            //snprintf(dayText, 64, "Inclination: %.4f Radians %.2f Degrees", stats->GetMass());
+            //DrawText(dayText, 10, 260, 20, WHITE);
         }
 
         EndDrawing();
