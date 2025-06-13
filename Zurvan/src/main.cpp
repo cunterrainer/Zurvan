@@ -24,9 +24,9 @@ using FLOAT = double;
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
-//const double MOON_MASS = 7.347e22; // kg
-//const double EARTH_MOON_DISTANCE = 384400000; // meters
-//const double MOON_SPEED = 1022; // meters per second
+const double MOON_MASS = 7.347e22; // kg
+const double EARTH_MOON_DISTANCE = 384400000; // meters
+const double MOON_SPEED = 1022; // meters per second
 
 const double DISTANCE_SCALE = 1e9; // 1 px = 1,000,000,000 meters
 #define TIME_SCALAR 1000.0
@@ -146,7 +146,7 @@ int main()
     neptun.SetLabel("Neptun");
 
     //Physics::RigidBody<FLOAT> moonA;
-    //moonA.SetPosition(EARTH_SUN_DISTANCE + EARTH_MOON_DISTANCE, 0, 0);
+    //moonA.SetPosition(Physics::Const::EARTH_SUN_DISTANCE + EARTH_MOON_DISTANCE, 0, 0);
     //moonA.SetVelocity(0, 0, MOON_SPEED);
     //moonA.SetMass(MOON_MASS);
     //moonA.SetColor(LIGHTGRAY);
@@ -265,6 +265,7 @@ int main()
         DrawCircle(GetScreenWidth() / 2, GetScreenHeight() / 2, 1, WHITE);
         Ray ray = GetScreenToWorldRay(center, camera);
 
+        static Physics::RigidBody<FLOAT>* stats = nullptr;
         for (size_t i = 0; i < bodies.size(); i++)
         {
             Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector());
@@ -272,32 +273,42 @@ int main()
             RayCollision collision = GetRayCollisionSphere(ray, pos, 50);
             if (collision.hit)
             {
-                snprintf(dayText, 64, "Name: %s", bodies[i]->GetLabel());
-                DrawText(dayText, 10, 80, 20, WHITE);
-
-                snprintf(dayText, 64, "Position X: %.f", bodies[i]->GetPosition().x);
-                DrawText(dayText, 10, 100, 20, WHITE);
-
-                snprintf(dayText, 64, "Position Y: %.f", bodies[i]->GetPosition().y);
-                DrawText(dayText, 10, 120, 20, WHITE);
-
-                snprintf(dayText, 64, "Position Z: %.f", bodies[i]->GetPosition().z);
-                DrawText(dayText, 10, 140, 20, WHITE);
-
-                snprintf(dayText, 64, "Velocity X: %.f M/S", bodies[i]->GetVelocity().x);
-                DrawText(dayText, 10, 180, 20, WHITE);
-
-                snprintf(dayText, 64, "Velocity Y: %.f M/S", bodies[i]->GetVelocity().y);
-                DrawText(dayText, 10, 200, 20, WHITE);
-
-                snprintf(dayText, 64, "Velocity Z: %.f M/S", bodies[i]->GetVelocity().z);
-                DrawText(dayText, 10, 220, 20, WHITE);
-
-                snprintf(dayText, 64, "Mass: %e KG", bodies[i]->GetMass());
-                DrawText(dayText, 10, 240, 20, WHITE);
-                break;
+                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+                    stats = bodies[i];
+                break; // only one even if multiple are hit due to increased hitbox
             }
+            else
+                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+                    stats = nullptr;
         }
+
+        if (stats != nullptr)
+        {
+            snprintf(dayText, 64, "Name: %s", stats->GetLabel());
+            DrawText(dayText, 10, 80, 20, WHITE);
+
+            snprintf(dayText, 64, "Position X: %.f", stats->GetPosition().x);
+            DrawText(dayText, 10, 100, 20, WHITE);
+
+            snprintf(dayText, 64, "Position Y: %.f", stats->GetPosition().y);
+            DrawText(dayText, 10, 120, 20, WHITE);
+
+            snprintf(dayText, 64, "Position Z: %.f", stats->GetPosition().z);
+            DrawText(dayText, 10, 140, 20, WHITE);
+
+            snprintf(dayText, 64, "Velocity X: %.f M/S", stats->GetVelocity().x);
+            DrawText(dayText, 10, 180, 20, WHITE);
+
+            snprintf(dayText, 64, "Velocity Y: %.f M/S", stats->GetVelocity().y);
+            DrawText(dayText, 10, 200, 20, WHITE);
+
+            snprintf(dayText, 64, "Velocity Z: %.f M/S", stats->GetVelocity().z);
+            DrawText(dayText, 10, 220, 20, WHITE);
+
+            snprintf(dayText, 64, "Mass: %e KG", stats->GetMass());
+            DrawText(dayText, 10, 240, 20, WHITE);
+        }
+
         EndDrawing();
     }
     TerminateWindow();
