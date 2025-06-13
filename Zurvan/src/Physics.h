@@ -6,7 +6,7 @@ namespace Physics
 {
     namespace Const
     {
-        const double G = 6.67430e-11;
+        const double G = 6.67430e-11; // m^3 / (kg * s^2)
     };
 
 
