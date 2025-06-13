@@ -175,9 +175,13 @@ int main()
     while (!WindowShouldClose())
     {
         auto start = std::chrono::high_resolution_clock::now();
-        //Physics::VelocityVerlet(bodies, TIME_STEP, GetFrameTime());
-        //Physics::RungeKutta4th(bodies, TIME_STEP, GetFrameTime());
-        Physics::EulerIntegration(bodies, TIME_STEP, GetFrameTime());
+
+        if (GetFrameTime() < 0.1f) // We need atleast 10 FPS to simulate properly
+        {
+            //Physics::VelocityVerlet(bodies, TIME_STEP, GetFrameTime());
+            //Physics::RungeKutta4th(bodies, TIME_STEP, GetFrameTime());
+            Physics::EulerIntegration(bodies, TIME_STEP, GetFrameTime());
+        }
 
         auto end = std::chrono::high_resolution_clock::now();
         auto elapsed_ms = std::chrono::duration<double, std::milli>(end - start).count();
