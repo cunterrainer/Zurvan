@@ -1,3 +1,10 @@
+/*
+    This project uses raylib (zlib/libpng license).
+
+    We have overridden the default camera far clipping distance (original 1000.0)
+    to 5000.0 via custom projection matrix in our rendering code.
+*/
+
 #include <cstdio>
 #include <vector>
 
