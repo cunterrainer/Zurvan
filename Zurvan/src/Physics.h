@@ -7,6 +7,44 @@ namespace Physics
     namespace Const
     {
         const double G = 6.67430e-11; // m^3 / (kg * s^2)
+
+        /*
+            Mass in KG
+            Sun distance in meters
+            Speed (around the sun) in meters per second
+        */
+        constexpr double SUN_MASS = 1.988416e30;
+        constexpr double EARTH_MASS = 5.972e24;
+        constexpr double EARTH_SUN_DISTANCE = 149000000000;
+        constexpr double EARTH_SPEED = 29722.2222;
+
+        constexpr double JUPITER_MASS = 1.89813e27;
+        constexpr double JUPTIER_SPEED = 13000;
+        constexpr double JUPTIER_SUN_DISTANCE = 778000000000;
+
+        constexpr double MERCURY_MASS = 3.30104e23;
+        constexpr double MERCURY_SPEED = 47870;
+        constexpr double MERCURY_SUN_DISTANCE = 58000000000;
+
+        constexpr double VENUS_MASS = 4.867e24;
+        constexpr double VENUS_SPEED = 35000;
+        constexpr double VENUS_SUN_DISTANCE = 108000000000;
+
+        constexpr double MARS_MASS = 6.39e23;
+        constexpr double MARS_SPEED = 24100;
+        constexpr double MARS_SUN_DISTANCE = 227900000000;
+
+        constexpr double SATURN_MASS = 5.683e26;
+        constexpr double SATURN_SPEED = 9672;
+        constexpr double SATURN_SUN_DISTANCE = 1400000000000;
+
+        constexpr double URANUS_MASS = 8.681e25;
+        constexpr double URANUS_SPEED = 6835;
+        constexpr double URANUS_SUN_DISTANCE = 2900000000000;
+
+        constexpr double NEPTUN_MASS = 1.024e26;
+        constexpr double NEPTUN_SPEED = 5430;
+        constexpr double NEPTUN_SUN_DISTANCE = 4500000000000;
     };
 
 
