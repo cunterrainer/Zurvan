@@ -11,7 +11,7 @@ endif
 CC = emcc
 
 ifeq ($(config),debug)
-	CC_FLAGS = -Og -g
+	CC_FLAGS = -Og -g -std=c++17
 
 	RAYLIB_TARGET_DIR = BIN/emcc/debug/raylib/bin
 	RAYLIB_OBJ_DIR = BIN/emcc/debug/raylib/bin-int
@@ -24,7 +24,7 @@ ifeq ($(config),debug)
 endif
 
 ifeq ($(config),release)
-	CC_FLAGS = -O3 -ffunction-sections -fdata-sections
+	CC_FLAGS = -O3 -ffunction-sections -fdata-sections -std=c++17
 	LD_FLAGS = -flto -Wl,--gc-sections
 
 	RAYLIB_TARGET_DIR = BIN/emcc/release/raylib/bin
@@ -80,7 +80,7 @@ all:
 	$(SILENT) mv $(RAYLIB_SRC)/rtext.o $(RAYLIB_OBJ_DIR)/rtext.o
 	$(SILENT) mv $(RAYLIB_SRC)/rtextures.o $(RAYLIB_OBJ_DIR)/rtextures.o
 	$(SILENT) mv $(RAYLIB_SRC)/utils.o $(RAYLIB_OBJ_DIR)/utils.o
-	$(SILENT) $(CC) -o $(ZURVAN_OBJ_DIR)/main.o -c Zurvan/src/main.c $(CC_FLAGS) -I$(RAYLIB_SRC)
+	$(SILENT) $(CC) -o $(ZURVAN_OBJ_DIR)/main.o -c Zurvan/src/main.cpp $(CC_FLAGS) -I$(RAYLIB_SRC)
 	$(SILENT) $(CC) -o $(ZURVAN_TARGET) $(CXX_FLAGS) $(LD_FLAGS) $(ZURVAN_OBJ_DIR)/main.o $(RAYLIB_TARGET) -s USE_GLFW=3 -sEXPORTED_RUNTIME_METHODS=['HEAPF32'] -sASYNCIFY
 
 
