@@ -85,14 +85,19 @@ project "Zurvan"
     }
 
     includedirs {
-        RaylibDir .. "/src"
+        RaylibDir .. "/src",
+        "../Dependencies/raygui/src"
     }
 
     externalincludedirs {
-        RaylibDir .. "/src"
+        RaylibDir .. "/src",
+        "../Dependencies/raygui/src"
     }
 
-    links "raylib"
+    links {
+        "raylib",
+        "raygui"
+    }
 
     filter "system:windows"
         links {

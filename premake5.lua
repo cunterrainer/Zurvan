@@ -41,3 +41,4 @@ removeunreferencedcodedata "on"
 
 include "Zurvan"
 include "Dependencies/raylib"
+include "Dependencies/raygui"
