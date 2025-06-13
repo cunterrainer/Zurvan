@@ -87,7 +87,7 @@ void UpdateCameraOverride(Camera* camera, int mode)
         if (mode == CAMERA_FREE)
         {
             if (IsKeyDown(KEY_SPACE)) CameraMoveUp(camera, cameraMoveSpeed);
-            if (IsKeyDown(KEY_LEFT_CONTROL)) CameraMoveUp(camera, -cameraMoveSpeed);
+            if (IsKeyDown(KEY_LEFT_SHIFT)) CameraMoveUp(camera, -cameraMoveSpeed);
         }
     }
 
