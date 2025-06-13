@@ -91,56 +91,56 @@ int main()
 
     Physics::RigidBody<FLOAT> earth;
     earth.SetPosition(Physics::Const::EARTH_SUN_DISTANCE, 0, 0);
-    earth.SetVelocity(0, 0, Physics::Const::EARTH_SPEED);
+    earth.SetVelocity(0, 0, -Physics::Const::EARTH_SPEED);
     earth.SetMass(Physics::Const::EARTH_MASS);
     earth.SetColor(BLUE);
     earth.SetLabel("Earth");
 
     Physics::RigidBody<FLOAT> juptier;
     juptier.SetPosition(Physics::Const::JUPTIER_SUN_DISTANCE, 0, 0);
-    juptier.SetVelocity(0, 0, Physics::Const::JUPTIER_SPEED);
+    juptier.SetVelocity(0, 0, -Physics::Const::JUPTIER_SPEED);
     juptier.SetMass(Physics::Const::JUPITER_MASS);
     juptier.SetColor(BROWN);
     juptier.SetLabel("Jupiter");
 
     Physics::RigidBody<FLOAT> mercury;
     mercury.SetPosition(Physics::Const::MERCURY_SUN_DISTANCE, 0, 0);
-    mercury.SetVelocity(0, 0, Physics::Const::MERCURY_SPEED);
+    mercury.SetVelocity(0, 0, -Physics::Const::MERCURY_SPEED);
     mercury.SetMass(Physics::Const::MERCURY_MASS);
     mercury.SetColor(GRAY);
     mercury.SetLabel("Mercury");
 
     Physics::RigidBody<FLOAT> venus;
     venus.SetPosition(Physics::Const::VENUS_SUN_DISTANCE, 0, 0);
-    venus.SetVelocity(0, 0, Physics::Const::VENUS_SPEED);
+    venus.SetVelocity(0, 0, -Physics::Const::VENUS_SPEED);
     venus.SetMass(Physics::Const::VENUS_MASS);
     venus.SetColor(RED);
     venus.SetLabel("Venus");
 
     Physics::RigidBody<FLOAT> mars;
     mars.SetPosition(Physics::Const::MARS_SUN_DISTANCE, 0, 0);
-    mars.SetVelocity(0, 0, Physics::Const::MARS_SPEED);
+    mars.SetVelocity(0, 0, -Physics::Const::MARS_SPEED);
     mars.SetMass(Physics::Const::MARS_MASS);
     mars.SetColor(ORANGE);
     mars.SetLabel("Mars");
 
     Physics::RigidBody<FLOAT> saturn;
     saturn.SetPosition(Physics::Const::SATURN_SUN_DISTANCE, 0, 0);
-    saturn.SetVelocity(0, 0, Physics::Const::SATURN_SPEED);
+    saturn.SetVelocity(0, 0, -Physics::Const::SATURN_SPEED);
     saturn.SetMass(Physics::Const::SATURN_MASS);
     saturn.SetColor(VIOLET);
     saturn.SetLabel("Saturn");
 
     Physics::RigidBody<FLOAT> uranus;
     uranus.SetPosition(Physics::Const::URANUS_SUN_DISTANCE, 0, 0);
-    uranus.SetVelocity(0, 0, Physics::Const::URANUS_SPEED);
+    uranus.SetVelocity(0, 0, -Physics::Const::URANUS_SPEED);
     uranus.SetMass(Physics::Const::URANUS_MASS);
     uranus.SetColor(SKYBLUE);
     uranus.SetLabel("Uranus");
 
     Physics::RigidBody<FLOAT> neptun;
     neptun.SetPosition(Physics::Const::NEPTUN_SUN_DISTANCE, 0, 0);
-    neptun.SetVelocity(0, 0, Physics::Const::NEPTUN_SPEED);
+    neptun.SetVelocity(0, 0, -Physics::Const::NEPTUN_SPEED);
     neptun.SetMass(Physics::Const::NEPTUN_MASS);
     neptun.SetColor(DARKBLUE);
     neptun.SetLabel("Neptun");
