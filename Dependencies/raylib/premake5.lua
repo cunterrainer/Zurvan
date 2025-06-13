@@ -1,7 +1,7 @@
 project "raylib"
     language "C"
     kind "StaticLib"
-    defines "PLATFORM_DESKTOP"
+    defines "PLATFORM_DESKTOP_GLFW" -- PLATFORM_DESKTOP_RGFW
     warnings "off"
 
     files {
