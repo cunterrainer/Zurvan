@@ -71,7 +71,7 @@ all:
 	$(call create_dir,$(RAYLIB_OBJ_DIR))
 	$(call create_dir,$(ZURVAN_TARGET_DIR))
 	$(call create_dir,$(ZURVAN_OBJ_DIR))
-	$(SILENT) $(MAKE) -C Dependencies/raylib/src -f Makefile.Web PLATFORM=PLATFORM_WEB $(PARALLEL_FLAG)
+	$(SILENT) $(MAKE) -C Dependencies/raylib/src -f Makefile PLATFORM=PLATFORM_WEB $(PARALLEL_FLAG)
 	$(SILENT) mv $(RAYLIB_SRC)/libraylib.a $(RAYLIB_TARGET)
 	$(SILENT) mv $(RAYLIB_SRC)/raudio.o $(RAYLIB_OBJ_DIR)/raudio.o
 	$(SILENT) mv $(RAYLIB_SRC)/rcore.o $(RAYLIB_OBJ_DIR)/rcore.o
@@ -81,7 +81,7 @@ all:
 	$(SILENT) mv $(RAYLIB_SRC)/rtextures.o $(RAYLIB_OBJ_DIR)/rtextures.o
 	$(SILENT) mv $(RAYLIB_SRC)/utils.o $(RAYLIB_OBJ_DIR)/utils.o
 	$(SILENT) $(CC) -o $(ZURVAN_OBJ_DIR)/main.o -c Zurvan/src/main.cpp $(CC_FLAGS) -I$(RAYLIB_SRC)
-	$(SILENT) $(CC) -o $(ZURVAN_TARGET) $(CXX_FLAGS) $(LD_FLAGS) $(ZURVAN_OBJ_DIR)/main.o $(RAYLIB_TARGET) -s USE_GLFW=3 -sEXPORTED_RUNTIME_METHODS=['HEAPF32'] -sASYNCIFY
+	$(SILENT) $(CC) -o $(ZURVAN_TARGET) $(CXX_FLAGS) $(LD_FLAGS) $(ZURVAN_OBJ_DIR)/main.o $(RAYLIB_TARGET) -s USE_GLFW=3 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sEXPORTED_RUNTIME_METHODS=['HEAPF32'] -sASYNCIFY
 
 
 clean:

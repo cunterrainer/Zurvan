@@ -227,5 +227,5 @@ int main()
 
         EndDrawing();
     }
-    TerminateWindow();
+    //CloseWindow();
 }
