@@ -3,6 +3,7 @@
 
 #include "raylib.h"
 
+using FLOAT = double;
 #include "Math.h"
 #include "Physics.h"
 
@@ -15,7 +16,6 @@
 const double DISTANCE_SCALE = 1e9; // 1 px = 1,000,000,000 meters
 #define TIME_SCALAR 10000.0
 const double TIME_STEP = 60 * 60 * TIME_SCALAR;        // 1 hour per frame
-using FLOAT = double;
 
 
 void Draw3DGridWithAxes(int size, float spacing)
@@ -24,8 +24,8 @@ void Draw3DGridWithAxes(int size, float spacing)
     for (int i = -size; i <= size; i++)
     {
         // XZ plane (Y=0)
-        DrawLine3D({ i * spacing, 0, -size * spacing }, { i * spacing, 0, size * spacing }, DARKGRAY);
-        DrawLine3D({ -size * spacing, 0, i * spacing }, { size * spacing, 0, i * spacing }, DARKGRAY);
+        DrawLine3D({ i * spacing, 0, -size * spacing }, { i * spacing, 0, size * spacing }, Fade(DARKGRAY, 0.3f));
+        DrawLine3D({ -size * spacing, 0, i * spacing }, { size * spacing, 0, i * spacing }, Fade(DARKGRAY, 0.3f));
 
         // XY plane (Z=0)
         DrawLine3D({ i * spacing, -size * spacing, 0 }, { i * spacing, size * spacing, 0 }, Fade(DARKGRAY, 0.3f));
@@ -46,17 +46,6 @@ void Draw3DGridWithAxes(int size, float spacing)
 }
 
 
-#define LOG_SCALE_FACTOR 50.0f  // tweak as needed
-
-Vector3 LogMetersToWorld(Vector3 meters) {
-    return Vector3 {
-        copysignf(log10f(fabsf(meters.x) + 1.0f) * LOG_SCALE_FACTOR, meters.x),
-            copysignf(log10f(fabsf(meters.y) + 1.0f) * LOG_SCALE_FACTOR, meters.y),
-            copysignf(log10f(fabsf(meters.z) + 1.0f) * LOG_SCALE_FACTOR, meters.z)
-    };
-}
-
-
 Vector3 MetersToWorld(Vector3 meters)
 {
     return Vector3{ meters.x / (float)DISTANCE_SCALE, meters.y / (float)DISTANCE_SCALE, meters.z / (float)DISTANCE_SCALE };
@@ -66,6 +55,7 @@ Vector3 MetersToWorld(Vector3 meters)
 int main()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Zurvan");
+    SetWindowState(FLAG_WINDOW_RESIZABLE);
 
     // Camera setup
     Camera3D camera = { 0 };
@@ -154,24 +144,13 @@ int main()
     //bodies.push_back(&moonA);
     //bodies.push_back(&moonB);
 
-    //double elapsedTime = 0;
+    double elapsedTime = 0;
     DisableCursor();
     while (!WindowShouldClose())
     {
-        for (size_t i = 0; i < bodies.size(); ++i)
-        {
-            Math::Vector3<FLOAT> acc;
-            for (size_t k = 0; k < bodies.size(); ++k)
-            {
-                if (i != k)
-                {
-                    Math::Vector3<FLOAT> a = bodies[i]->ComputeAcceleration(*bodies[k]);
-                    acc += a;
-                }
-            }
-            bodies[i]->SetVelocity(bodies[i]->GetVelocity() + (acc * (TIME_STEP * GetFrameTime())));
-            bodies[i]->SetPosition(bodies[i]->GetPosition() + (bodies[i]->GetVelocity() * (TIME_STEP * GetFrameTime())));
-        }
+        //Physics::VelocityVerlet(bodies, TIME_STEP, GetFrameTime());
+        Physics::RungeKutta4th(bodies, TIME_STEP, GetFrameTime());
+        //Physics::EulerIntegration(bodies, TIME_STEP, GetFrameTime());
 
         UpdateCamera(&camera, CAMERA_FREE);
 
@@ -180,7 +159,7 @@ int main()
         ClearBackground(BLACK);
         BeginMode3D(camera);
         // Draw coordinate axes
-        Draw3DGridWithAxes(100, 10.0f);
+        Draw3DGridWithAxes(100, 30.0f);
 
         for (int i = 0; i < bodies.size(); i++) {
             Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector());
@@ -213,11 +192,11 @@ int main()
         DrawText("Y", screenY.x - widthY / 2, screenY.y - fontSize / 2, fontSize, GREEN);
         DrawText("Z", screenZ.x - widthZ / 2, screenZ.y - fontSize / 2, fontSize, BLUE);
         DrawFPS(10, 10);
-        //elapsedTime += TIME_STEP * GetFrameTime();
-        //double daysPassed = elapsedTime / (60.0 * 60.0 * 24.0);  // seconds to days
-        //char dayText[64];
-        //sprintf_s(dayText, 64, "Days passed: %.2f", daysPassed);
-        //DrawText(dayText, 10, 40, 20, WHITE);
+        elapsedTime += TIME_STEP * GetFrameTime();
+        double daysPassed = elapsedTime / (60.0 * 60.0 * 24.0);  // seconds to days
+        char dayText[64];
+        sprintf_s(dayText, 64, "Days passed: %.2f", daysPassed);
+        DrawText(dayText, 10, 40, 20, WHITE);
 
 
         // Compute distances (in meters)
