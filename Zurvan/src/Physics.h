@@ -128,9 +128,9 @@ namespace Physics
             return m_Mass;
         }
 
-        virtual Color GetColor() const noexcept = 0;
-        virtual double GetRadius() const noexcept = 0;
-        virtual const char* GetLabel() const noexcept = 0;
+        virtual inline Color GetColor() const noexcept = 0;
+        virtual inline double GetRadius() const noexcept = 0;
+        virtual inline const char* GetLabel() const noexcept = 0;
     };
 
 
@@ -142,6 +142,8 @@ namespace Physics
         const char* m_Name = nullptr;
         Color m_Color = WHITE;
     public:
+        Planet() = default;
+
         Planet(FLOAT distanceToSun, FLOAT speedAroundSun, FLOAT mass, double radius, double inclination, const char* name, Color color)
             : m_Radius(radius), m_Inclination(inclination), m_Name(name), m_Color(color)
         {
@@ -158,21 +160,35 @@ namespace Physics
             SetMass(mass);
         }
 
-        Color GetColor() const noexcept
+        constexpr void SetColor(Color color) noexcept
+        {
+            m_Color = color;
+        }
+
+        constexpr void SetRadius(double radius) noexcept
+        {
+            m_Radius = radius;
+        }
+
+        constexpr void SetLabel(const char* label) noexcept
+        {
+            m_Name = label;
+        }
+
+        inline Color GetColor() const noexcept
         {
             return m_Color;
         }
 
-        double GetRadius() const noexcept
+        inline double GetRadius() const noexcept
         {
             return m_Radius;
         }
 
-        const char* GetLabel() const noexcept
+        inline const char* GetLabel() const noexcept
         {
             return m_Name;
         }
-
     };
 
 
