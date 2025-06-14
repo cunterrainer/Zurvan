@@ -10,6 +10,7 @@
 #include <vector>
 #include <chrono>
 #include <string>
+#include <cassert>
 #include <sstream>
 #include <iostream>
 
@@ -29,6 +30,7 @@ const double EARTH_MOON_DISTANCE = 384400000; // meters
 const double MOON_SPEED = 1022; // meters per second
 
 const double DISTANCE_SCALE = 1e9; // 1 px = 1,000,000,000 meters
+const double RADIUS_SCALE = 1e6; // 1 px = 1,000,000 meters
 #define TIME_SCALAR 1000.0
 const double TIME_STEP = 60 * 60 * TIME_SCALAR;        // 1 hour per frame
 
@@ -57,7 +59,7 @@ void Draw3DGridWithAxes(int size, float spacing)
     DrawLine3D({ 0, 0, 0 }, { 0, 0, 100 }, BLUE);  // Z axis
 
     // Draw origin
-    DrawSphere(Vector3{ 0, 0, 0 }, 1.0f, YELLOW);
+    //DrawSphere(Vector3{ 0, 0, 0 }, 1.0f, YELLOW);
 }
 
 
@@ -109,6 +111,8 @@ int main()
     bodies.push_back(&uranus);
     bodies.push_back(&neptun);
 
+    std::vector<Vector3> renderPositions(bodies.size());
+
     double elapsedTime = 0;
     DisableCursor();
     while (!WindowShouldClose())
@@ -134,11 +138,21 @@ int main()
         // Draw coordinate axes
         Draw3DGridWithAxes(100, 30.0f);
 
-        for (size_t i = 0; i < bodies.size(); i++) {
+        for (size_t i = 0; i < bodies.size(); i++) 
+        {
+            Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector()); 
+            float renderedRadius = bodies[i]->GetRadius() / RADIUS_SCALE;
 
-            Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector());
-            //float radius = (float)(2.0 + log10(bodies[i]->GetMass()) - 21);
-            DrawSphere(pos, (bodies[i]->GetRadius() / DISTANCE_SCALE) * 500, bodies[i]->GetColor());
+            // Quick and dirty fix to add the radius off the planet and the sun to it's position to
+            // properly render it
+            if (i != 0)
+            {
+                Vector3 direction = Vector3Normalize(pos);
+                pos = Vector3Add(pos, Vector3Scale(direction, renderedRadius)); // move forward by its rendered radius
+                pos = Vector3Add(pos, Vector3Scale(direction, sun.GetRadius() / RADIUS_SCALE));
+            }
+            renderPositions[i] = pos;
+            DrawSphere(pos, renderedRadius, bodies[i]->GetColor());
         }
 
         //DrawLine3D(MetersToWorld(earth.GetPosition().ToRaylibVector()), MetersToWorld(moonA.GetPosition().ToRaylibVector()), RED);
@@ -168,9 +182,12 @@ int main()
         DrawFPS(10, 10);
 
 
-        for (size_t i = 0; i < bodies.size(); i++) {
+        for (size_t i = 0; i < bodies.size(); i++)
+        {
+            assert(bodies.size() == renderPositions.size() && "bodies.size() doesn't match renderPostions.size()");
             // Get their 3D position
-            Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector());
+            //Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector());
+            Vector3 pos = renderPositions[i];
             Matrix cameraMatrix = GetCameraMatrix(camera);
             Vector4 cameraSpace = Vector4{ pos.x, pos.y, pos.z, 1.0f } * cameraMatrix;
 
