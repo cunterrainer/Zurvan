@@ -8,14 +8,9 @@
 #include "Renderer.h"
 #include "Application.h"
 
-
-using FLOAT = double;
-Application::Application() noexcept
+Application::Application(int width, int height) noexcept
+    : m_ScreenWidth(width), m_ScreenHeight(height)
 {
-    InitWindow(m_ScreenWidth, m_ScreenHeight, m_Title);
-    SetWindowState(FLAG_WINDOW_RESIZABLE);
-    DisableCursor();
-
     m_SettingsWindow.Init();
 
     m_Camera.position = Vector3{ 250.0f, 1900.0f, 3350.0f };
@@ -38,11 +33,6 @@ Application::Application() noexcept
     m_InfoTimer = std::chrono::steady_clock::now();
 }
 
-Application::~Application() noexcept
-{
-    TerminateWindow();
-}
-
 constexpr int Application::ScreenWidth() const noexcept
 {
     return m_ScreenWidth;
@@ -51,6 +41,12 @@ constexpr int Application::ScreenWidth() const noexcept
 constexpr int Application::ScreenHeight() const noexcept
 {
     return m_ScreenHeight;
+}
+
+void Application::SetScreenSize(int width, int height) noexcept
+{
+    m_ScreenWidth = width;
+    m_ScreenHeight = height;
 }
 
 
@@ -67,10 +63,12 @@ void Application::Simulate(float dt)
 
 void Application::OnUpdate() noexcept
 {
-    if (IsWindowResized())
+    if (m_ShowInfoText)
     {
-        m_ScreenHeight = GetScreenHeight();
-        m_ScreenWidth = GetScreenWidth();
+        const auto endInfoTimer = std::chrono::steady_clock::now();
+        const double infoTime = std::chrono::duration<double, std::milli>(endInfoTimer - m_InfoTimer).count();
+        if (infoTime > 5000) // 5 secs
+            m_ShowInfoText = false;
     }
 
     if (!m_SettingsWindow.Visible())
@@ -85,7 +83,7 @@ void Application::OnUpdate() noexcept
         for (size_t i = 0; i < m_Bodies.size(); i++)
         {
             const Vector3 pos = m_Bodies[i].GetRenderPos();
-            const float radius = (m_Bodies[i].GetRadius() / Renderer::Globals::RADIUS_SCALE) + 30;
+            const float radius = static_cast<float>((m_Bodies[i].GetRadius() / Renderer::Globals::RADIUS_SCALE) + 30);
 
             const RayCollision collision = GetRayCollisionSphere(ray, pos, radius);
             if (collision.hit)
@@ -100,7 +98,7 @@ void Application::OnUpdate() noexcept
 }
 
 
-void Application::Draw3DGridWithAxes(int size, float spacing)
+void Application::Draw3DGridWithAxes(int size, float spacing) const noexcept
 {
     // Draw grid lines along each axis
     for (int i = -size; i <= size; i++)
@@ -125,34 +123,6 @@ void Application::Draw3DGridWithAxes(int size, float spacing)
 
     // Draw origin
     //DrawSphere(Vector3{ 0, 0, 0 }, 1.0f, YELLOW);
-}
-
-
-void Application::Run() noexcept
-{
-    while (!WindowShouldClose())
-    {
-        const float dt = GetFrameTime();
-
-        if (m_ShowInfoText)
-        {
-            const auto endInfoTimer = std::chrono::steady_clock::now();
-            const double infoTime = std::chrono::duration<double, std::milli>(endInfoTimer - m_InfoTimer).count();
-            if (infoTime > 5000) // 5 secs
-                m_ShowInfoText = false;
-        }
-
-        const auto start = std::chrono::high_resolution_clock::now();
-        Simulate(dt);
-        const auto end = std::chrono::high_resolution_clock::now();
-        m_SimulationTime = std::chrono::duration<double, std::milli>(end - start).count();
-
-        OnUpdate();
-
-        BeginDrawing();
-        Render();
-        EndDrawing();
-    }
 }
 
 
@@ -266,8 +236,9 @@ void Application::RenderCoordinateAxis()
 }
 
 
-void Application::Render()
+void Application::OnRender()
 {
+    BeginDrawing();
     ClearBackground(BLACK);
     BeginMode3D(m_Camera);
     // Draw coordinate axes
@@ -309,4 +280,5 @@ void Application::Render()
 
     DrawCircle(ScreenWidth() / 2, ScreenHeight() / 2, 1, WHITE);
     RenderPlanetStats(m_SelectedBody);
+    EndDrawing();
 }

@@ -15,12 +15,11 @@ private:
     #define TIME_SCALAR 1000.0
     const double TIME_STEP = 60 * 60 * TIME_SCALAR;        // 1 hour per frame
 private:
-    int m_ScreenWidth = 1280;
-    int m_ScreenHeight = 780;
+    int m_ScreenWidth;
+    int m_ScreenHeight;
     bool m_ShowInfoText = true;
     double m_ElapsedTime = 0.0;
     double m_SimulationTime = 0.0;
-    const char* m_Title = "Zurvan";
 
     Camera3D m_Camera;
     SettingsWindow m_SettingsWindow;
@@ -28,18 +27,18 @@ private:
     std::vector<Physics::RigidBody<FLOAT>> m_Bodies;
     std::chrono::steady_clock::time_point m_InfoTimer;
 public:
-    Application() noexcept;
-    ~Application() noexcept;
+    Application(int width, int height) noexcept;
+    ~Application() noexcept = default;
 
     constexpr int ScreenWidth() const noexcept;
     constexpr int ScreenHeight() const noexcept;
+    void SetScreenSize(int width, int height) noexcept;
 
     void Simulate(float dt);
     void OnUpdate() noexcept;
-    void Draw3DGridWithAxes(int size, float spacing);
-    void Run() noexcept;
+    void Draw3DGridWithAxes(int size, float spacing) const noexcept;
     void RenderPlanets(std::vector<Physics::RigidBody<FLOAT>>* bodies, const Physics::RigidBody<FLOAT>& sun);
     void RenderPlanetStats(Physics::RigidBody<FLOAT>* stats);
     void RenderCoordinateAxis();
-    void Render();
+    void OnRender();
 };

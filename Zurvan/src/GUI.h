@@ -3,9 +3,6 @@
 #define RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT 24
 #define RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT 18
 
-//#include "styles/dark/style_dark.h"
-//#include "styles/amber/style_amber.h"
-//#include "styles/ashes/style_ashes.h"
 #include "raygui.h"
 
 class FloatingWindow
@@ -136,10 +133,7 @@ public:
         return { m_Bounds.x + x, m_Bounds.y + y + StatusBarHeight, static_cast<float>(width), static_cast<float>(height) };
     }
 
-    void Init() const noexcept
-    {
-       // GuiLoadStyleDark();
-    }
+    void Init() const noexcept;
 
     void Show() noexcept
     {

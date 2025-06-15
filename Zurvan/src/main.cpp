@@ -45,6 +45,23 @@ const double MOON_SPEED = 1022; // meters per second
 
 int main()
 {
-    Application app;
-    app.Run();
+    InitWindow(1280, 720, "Zurvan");
+    SetWindowState(FLAG_WINDOW_RESIZABLE);
+    DisableCursor();
+
+    Application app(GetScreenWidth(), GetScreenHeight());
+    while (!WindowShouldClose())
+    {
+        const float dt = GetFrameTime();
+
+        if (IsWindowResized())
+        {
+            app.SetScreenSize(GetScreenWidth(), GetScreenHeight());
+        }
+
+        app.Simulate(dt);
+        app.OnUpdate();
+        app.OnRender();
+    }
+    TerminateWindow();
 }
