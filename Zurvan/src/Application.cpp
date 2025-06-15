@@ -56,12 +56,15 @@ void Application::SetScreenSize(int width, int height) noexcept
 
 void Application::Simulate(float dt)
 {
+    const auto start = std::chrono::high_resolution_clock::now();
     if (dt < 0.1f) // We need atleast 10 FPS to simulate properly
     {
         //Physics::VelocityVerlet(&m_Bodies, TIME_STEP, dt);
         //Physics::RungeKutta4th(&m_Bodies, TIME_STEP, dt);
         Physics::EulerIntegration(&m_Bodies, TIME_STEP, dt);
     }
+    const auto end = std::chrono::high_resolution_clock::now();
+    m_SimulationTime = std::chrono::duration<double, std::milli>(end - start).count();
 }
 
 
