@@ -1,9 +1,13 @@
 #pragma once
+#include <cstddef>
+
 // needed because otherwise raygui will define them internally
 #define RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT 24
 #define RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT 18
 
 #include "raygui.h"
+
+#include "Renderer.h"
 
 class FloatingWindow
 {
@@ -167,8 +171,27 @@ class SettingsWindow : public FloatingWindow
 private:
     int m_SelectedSimulationMode = 0;
     bool m_SimulationModeDropdownEditMode = false;
+
+    int m_RenderDistanceScale = Renderer::Globals::DISTANCE_SCALE;
+    bool m_RenderDistanceScaleEditMode = false;
+
+    int m_RenderRadiusScale = Renderer::Globals::RADIUS_SCALE;
+    bool m_RenderRadiusScaleEditMode = false;
+
+    int m_SimulationRate = 1000;
+    bool m_SimulationRateEditMode = false;
 public:
     SettingsWindow() : FloatingWindow(20, 20, 500, 500, "Settings", KEY_F1, 200, 200) {}
+
+    float GetRenderDistanceScale() const noexcept
+    {
+        return static_cast<float>(m_RenderDistanceScale);
+    }
+
+    float GetRenderRadiusScale() const noexcept
+    {
+        return static_cast<float>(m_RenderRadiusScale);
+    }
 
     void Draw() noexcept
     {
@@ -180,10 +203,28 @@ public:
 
         GuiLabel(ToWindowSpace(10, 10, 150, 20), "Simulation algorithm");
 
-        static bool edit = false;
-        static int value = 15;
-        GuiSpinner(ToWindowSpace(10, 50, 100, 20), NULL, &value, 10, 30, edit);
-        GuiSpinner(ToWindowSpace(10, 70, 100, 20), NULL, &value, 10, 30, edit);
+        const int renderDistanceScale = m_RenderDistanceScale;
+        GuiSpinner(ToWindowSpace(10, 50, 150, 20), NULL, &m_RenderDistanceScale, 1e8, 1e9, m_RenderDistanceScaleEditMode);
+        GuiLabel(ToWindowSpace(160, 50, 50, 20), "Render distance scale");
+        if (renderDistanceScale < m_RenderDistanceScale)
+        {
+            m_RenderDistanceScale = renderDistanceScale + 1e8;
+        }
+        else if (renderDistanceScale > m_RenderDistanceScale)
+        {
+            m_RenderDistanceScale = renderDistanceScale - 1e8;
+        }
+
+        const int renderRadiusScale = m_RenderRadiusScale;
+        GuiSpinner(ToWindowSpace(10, 70, 150, 20), NULL, &m_RenderRadiusScale, 1e5, 1e7, m_RenderRadiusScaleEditMode);
+        if (renderRadiusScale < m_RenderRadiusScale)
+        {
+            m_RenderRadiusScale = renderRadiusScale + 1e5;
+        }
+        else if (renderRadiusScale > m_RenderRadiusScale)
+        {
+            m_RenderRadiusScale = renderRadiusScale - 1e5;
+        }
 
         GuiUnlock();
         if (GuiDropdownBox(ToWindowSpace(10, 30, 170, 20), "Euler integration;Velocity Verlet algorithm;Runge-Kutta 4th", &m_SelectedSimulationMode, (int)m_SimulationModeDropdownEditMode))

@@ -132,8 +132,8 @@ void Application::RenderPlanets(std::vector<Physics::RigidBody<FLOAT>>* bodies, 
 
     for (size_t i = 0; i < bodiesRef.size(); i++)
     {
-        Vector3 pos = Renderer::MetersToWorld(bodiesRef[i].GetPosition().ToRaylibVector());
-        float renderedRadius = (float)(bodiesRef[i].GetRadius() / Renderer::Globals::RADIUS_SCALE);
+        Vector3 pos = Renderer::MetersToWorld(bodiesRef[i].GetPosition().ToRaylibVector(), m_SettingsWindow.GetRenderDistanceScale());
+        float renderedRadius = (float)(bodiesRef[i].GetRadius() / m_SettingsWindow.GetRenderRadiusScale());
 
         // Quick and dirty fix to add the radius off the planet and the sun to it's position to
         // properly render it
@@ -141,7 +141,7 @@ void Application::RenderPlanets(std::vector<Physics::RigidBody<FLOAT>>* bodies, 
         {
             Vector3 direction = Vector3Normalize(pos);
             pos = Vector3Add(pos, Vector3Scale(direction, renderedRadius)); // move forward by its rendered radius
-            pos = Vector3Add(pos, Vector3Scale(direction, sun.GetRadius() / Renderer::Globals::RADIUS_SCALE));
+            pos = Vector3Add(pos, Vector3Scale(direction, sun.GetRadius() / m_SettingsWindow.GetRenderRadiusScale()));
         }
         bodiesRef[i].SetRenderPos(pos);
         DrawSphere(pos, renderedRadius, bodiesRef[i].GetColor());
