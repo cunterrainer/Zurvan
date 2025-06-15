@@ -1,7 +1,10 @@
 #pragma once
+#include <cmath>
 #include <vector>
 
 #include "raylib.h"
+
+#include "Physics.h"
 
 namespace Renderer
 {
@@ -104,8 +107,13 @@ namespace Renderer
             snprintf(dayText, 64, "Mass: %e KG", stats->GetMass());
             DrawText(dayText, 10, 240, 20, WHITE);
 
-            //snprintf(dayText, 64, "Inclination: %.4f Radians %.2f Degrees", stats->GetMass());
-            //DrawText(dayText, 10, 260, 20, WHITE);
+            const double dist = stats->GetPosition().Distance({ 0, 0, 0 });
+            if (dist != 0.0)
+            {
+                const double angle = std::asin(stats->GetPosition().y / dist);
+                snprintf(dayText, 64, "Inclination: %.4f Radians %.2f Degrees", angle, angle * (180 / Physics::Const::Pi));
+                DrawText(dayText, 10, 260, 20, WHITE);
+            }
         }
     }
 }

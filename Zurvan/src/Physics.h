@@ -7,6 +7,7 @@ namespace Physics
     namespace Const
     {
         constexpr FLOAT G = static_cast<FLOAT>(6.67430e-11); // m^3 / (kg * s^2)
+        constexpr FLOAT Pi = static_cast<FLOAT>(3.14159265358979323846f);
 
         /*
             Mass in KG
@@ -80,12 +81,11 @@ namespace Physics
         // Just for the visuals, not effect on the simulation
         Vector3 m_RenderPosition; // using raylibs Vector3 because it's only for visuals, will be set on the first time rendering
         double m_Radius;
-        double m_Inclination;
         const char* m_Label;
         Color m_Color;
     public:
         RigidBody(T distanceToCenter, T velocityAroundCenter, T mass, double radius, double inclination, const char* name, Color color)
-            : m_Mass(mass), m_Radius(radius), m_Inclination(inclination), m_Label(name), m_Color(color)
+            : m_Mass(mass), m_Radius(radius), m_Label(name), m_Color(color)
         {
             m_Position.x = distanceToCenter;
             m_Position.y = distanceToCenter * static_cast<FLOAT>(std::sin(inclination));
