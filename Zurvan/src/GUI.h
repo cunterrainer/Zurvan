@@ -17,7 +17,7 @@ private:
     Vector2 m_MinSize;
     Rectangle m_Bounds;
     bool m_Moving = false;
-    bool m_Visible = true;
+    bool m_Visible = false;
     bool m_Resizing = false;
     const char* m_Title;
     KeyboardKey m_ActivationKey = KEY_NULL;
@@ -119,7 +119,6 @@ public:
     FloatingWindow(int x, int y, int width, int height, const char* title, KeyboardKey activationKey, int minWidth, int minHeight) noexcept
         : m_Bounds(Rectangle{ static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), static_cast<float>(height) }), m_Title(title), m_ActivationKey(activationKey), m_MinSize({ static_cast<float>(minWidth), static_cast<float>(minHeight) })
     {
-        GuiLoadStyleDark();
     }
 
     ~FloatingWindow() noexcept
@@ -135,6 +134,11 @@ public:
     Rectangle ToWindowSpace(int x, int y, int width, int height) const noexcept
     {
         return { m_Bounds.x + x, m_Bounds.y + y + StatusBarHeight, static_cast<float>(width), static_cast<float>(height) };
+    }
+
+    void Init() const noexcept
+    {
+        GuiLoadStyleDark();
     }
 
     void Show() noexcept

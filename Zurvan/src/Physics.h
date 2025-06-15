@@ -128,9 +128,11 @@ namespace Physics
             return m_Mass;
         }
 
-        virtual inline Color GetColor() const noexcept = 0;
-        virtual inline double GetRadius() const noexcept = 0;
-        virtual inline const char* GetLabel() const noexcept = 0;
+        virtual Color GetColor() const noexcept = 0;
+        virtual void SetRenderPos(Vector3 pos) noexcept = 0;
+        virtual double GetRadius() const noexcept = 0;
+        virtual const char* GetLabel() const noexcept = 0;
+        virtual Vector3 GetRenderPos() const noexcept = 0;
     };
 
 
@@ -141,6 +143,7 @@ namespace Physics
         double m_Inclination = 0.0;
         const char* m_Name = nullptr;
         Color m_Color = WHITE;
+        Vector3 m_RenderPos;
     public:
         Planet() = default;
 
@@ -175,6 +178,11 @@ namespace Physics
             m_Name = label;
         }
 
+        inline void SetRenderPos(Vector3 pos) noexcept
+        {
+            m_RenderPos = pos;
+        }
+
         inline Color GetColor() const noexcept
         {
             return m_Color;
@@ -188,6 +196,11 @@ namespace Physics
         inline const char* GetLabel() const noexcept
         {
             return m_Name;
+        }
+
+        inline Vector3 GetRenderPos() const noexcept
+        {
+            return m_RenderPos;
         }
     };
 
