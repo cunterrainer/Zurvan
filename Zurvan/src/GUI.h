@@ -172,10 +172,10 @@ private:
     int m_SelectedSimulationMode = 0;
     bool m_SimulationModeDropdownEditMode = false;
 
-    int m_RenderDistanceScale = Renderer::Globals::DISTANCE_SCALE;
+    int m_RenderDistanceScale = Globals::DISTANCE_SCALE;
     bool m_RenderDistanceScaleEditMode = false;
 
-    int m_RenderRadiusScale = Renderer::Globals::RADIUS_SCALE;
+    int m_RenderRadiusScale = Globals::RADIUS_SCALE;
     bool m_RenderRadiusScaleEditMode = false;
 
     int m_SimulationRate = 1000;

@@ -33,6 +33,10 @@ Application::Application(int width, int height) noexcept
     m_InfoTimer = std::chrono::steady_clock::now();
 }
 
+Application::~Application() noexcept
+{
+}
+
 constexpr int Application::ScreenWidth() const noexcept
 {
     return m_ScreenWidth;
@@ -83,7 +87,7 @@ void Application::OnUpdate() noexcept
         for (size_t i = 0; i < m_Bodies.size(); i++)
         {
             const Vector3 pos = m_Bodies[i].GetRenderPos();
-            const float radius = static_cast<float>((m_Bodies[i].GetRadius() / Renderer::Globals::RADIUS_SCALE) + 30);
+            const float radius = static_cast<float>((m_Bodies[i].GetRadius() / Globals::RADIUS_SCALE) + 30);
 
             const RayCollision collision = GetRayCollisionSphere(ray, pos, radius);
             if (collision.hit)
@@ -155,35 +159,35 @@ void Application::RenderPlanetStats(Physics::RigidBody<FLOAT>* stats)
     {
         char dayText[64];
         snprintf(dayText, 64, "Name: %s", stats->GetLabel());
-        DrawText(dayText, 10, 80, 20, WHITE);
+        Renderer::DrawText(dayText, 10, 80);
 
         snprintf(dayText, 64, "Position X: %.f", stats->GetPosition().x);
-        DrawText(dayText, 10, 100, 20, WHITE);
+        Renderer::DrawText(dayText, 10, 100);
 
         snprintf(dayText, 64, "Position Y: %.f", stats->GetPosition().y);
-        DrawText(dayText, 10, 120, 20, WHITE);
+        Renderer::DrawText(dayText, 10, 120);
 
         snprintf(dayText, 64, "Position Z: %.f", stats->GetPosition().z);
-        DrawText(dayText, 10, 140, 20, WHITE);
+        Renderer::DrawText(dayText, 10, 140);
 
         snprintf(dayText, 64, "Velocity X: %.f M/S", stats->GetVelocity().x);
-        DrawText(dayText, 10, 180, 20, WHITE);
+        Renderer::DrawText(dayText, 10, 180);
 
         snprintf(dayText, 64, "Velocity Y: %.f M/S", stats->GetVelocity().y);
-        DrawText(dayText, 10, 200, 20, WHITE);
+        Renderer::DrawText(dayText, 10, 200);
 
         snprintf(dayText, 64, "Velocity Z: %.f M/S", stats->GetVelocity().z);
-        DrawText(dayText, 10, 220, 20, WHITE);
+        Renderer::DrawText(dayText, 10, 220);
 
         snprintf(dayText, 64, "Mass: %e KG", stats->GetMass());
-        DrawText(dayText, 10, 240, 20, WHITE);
+        Renderer::DrawText(dayText, 10, 240);
 
         const double dist = stats->GetPosition().Distance({ 0, 0, 0 });
         if (dist != 0.0)
         {
             const double angle = std::asin(stats->GetPosition().y / dist);
             snprintf(dayText, 64, "Inclination: %.4f Radians %.2f Degrees", angle, angle * (180 / Physics::Const::Pi));
-            DrawText(dayText, 10, 260, 20, WHITE);
+            Renderer::DrawText(dayText, 10, 260);
         }
     }
 }
@@ -204,9 +208,9 @@ void Application::RenderCoordinateAxis()
     int widthZ = MeasureText("Z", fontSize);
 
     // Draw centered labels
-    DrawText("X", screenX.x - widthX / 2, screenX.y - fontSize / 2, fontSize, RED);
-    DrawText("Y", screenY.x - widthY / 2, screenY.y - fontSize / 2, fontSize, GREEN);
-    DrawText("Z", screenZ.x - widthZ / 2, screenZ.y - fontSize / 2, fontSize, BLUE);
+    Renderer::DrawText("X", screenX.x - widthX / 2, screenX.y - fontSize / 2, RED);
+    Renderer::DrawText("Y", screenY.x - widthY / 2, screenY.y - fontSize / 2, GREEN);
+    Renderer::DrawText("Z", screenZ.x - widthZ / 2, screenZ.y - fontSize / 2, BLUE);
 
 
     for (size_t i = 0; i < m_Bodies.size(); i++)
@@ -214,7 +218,7 @@ void Application::RenderCoordinateAxis()
         // Get their 3D position
         //Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector());
         Vector3 pos = m_Bodies[i].GetRenderPos();
-        pos.y = pos.y + m_Bodies[i].GetRadius() / Renderer::Globals::RADIUS_SCALE;
+        pos.y = pos.y + m_Bodies[i].GetRadius() / Globals::RADIUS_SCALE;
         Matrix cameraMatrix = GetCameraMatrix(m_Camera);
         Vector4 cameraSpace = Vector4{ pos.x, pos.y, pos.z, 1.0f } *cameraMatrix;
 
@@ -225,12 +229,10 @@ void Application::RenderCoordinateAxis()
         Vector2 screenPos = GetWorldToScreen(pos, m_Camera);
 
         // Draw label above the sphere
-        DrawText(
+        Renderer::DrawText(
             m_Bodies[i].GetLabel(),
             (int)screenPos.x - MeasureText(m_Bodies[i].GetLabel(), 20) / 2, // center horizontally
-            (int)screenPos.y - 20, // move up 20px
-            20,
-            WHITE
+            (int)screenPos.y - 20 // move up 20px
         );
     }
 }
@@ -263,16 +265,16 @@ void Application::OnRender()
     double daysPassed = m_ElapsedTime / (60.0 * 60.0 * 24.0);  // seconds to days
     char dayText[64];
     snprintf(dayText, 64, "Days passed: %.2f", daysPassed);
-    DrawText(dayText, 10, 40, 20, WHITE);
+    Renderer::DrawText(dayText, 10, 40);
 
     snprintf(dayText, 64, "Simulation time: %.4f ms", m_SimulationTime);
-    DrawText(dayText, 10, 60, 20, WHITE);
+    Renderer::DrawText(dayText, 10, 60);
 
     if (m_ShowInfoText)
     {
         std::strncpy(dayText, "Press F1 to open the settings window", 64);
         MeasureText(dayText, 20);
-        DrawText(dayText, (GetScreenWidth() - MeasureText(dayText, 20)) / 2, 10, 20, WHITE);
+        Renderer::DrawText(dayText, (GetScreenWidth() - MeasureText(dayText, 20)) / 2, 10);
     }
 
     m_SettingsWindow.Draw();

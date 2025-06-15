@@ -28,7 +28,7 @@ private:
     std::chrono::steady_clock::time_point m_InfoTimer;
 public:
     Application(int width, int height) noexcept;
-    ~Application() noexcept = default;
+    ~Application() noexcept;
 
     constexpr int ScreenWidth() const noexcept;
     constexpr int ScreenHeight() const noexcept;

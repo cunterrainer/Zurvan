@@ -4,6 +4,7 @@
     We have overridden the default RL_CULL_DISTANCE_FAR clipping distance (original 1000.0) to 20000.0
 */
 
+#include "Renderer.h"
 #include "Application.h"
 
 const double MOON_MASS = 7.347e22; // kg
@@ -49,6 +50,8 @@ int main()
     SetWindowState(FLAG_WINDOW_RESIZABLE);
     DisableCursor();
 
+    Renderer::Init();
+
     Application app(GetScreenWidth(), GetScreenHeight());
     while (!WindowShouldClose())
     {
@@ -63,5 +66,7 @@ int main()
         app.OnUpdate();
         app.OnRender();
     }
+
+    Renderer::Shutdown();
     TerminateWindow();
 }
