@@ -22,17 +22,7 @@ private:
 
     Camera3D m_Camera;
     SettingsWindow m_SettingsWindow;
-    std::vector<Physics::RigidBody<FLOAT>*> m_Bodies;
-
-    Physics::Planet sun     = Physics::Planet(                                 0.0,                            0.0, Physics::Const::SUN_MASS,     Physics::Const::SUN_RADIUS,     Physics::Const::SUN_INCLINE,     "Sun",     YELLOW);
-    Physics::Planet earth   = Physics::Planet(Physics::Const::EARTH_SUN_DISTANCE,   -Physics::Const::EARTH_SPEED,   Physics::Const::EARTH_MASS,   Physics::Const::EARTH_RADIUS,   Physics::Const::EARTH_INCLINE,   "Earth",   BLUE);
-    Physics::Planet juptier = Physics::Planet(Physics::Const::JUPTIER_SUN_DISTANCE, -Physics::Const::JUPTIER_SPEED, Physics::Const::JUPITER_MASS, Physics::Const::JUPITER_RADIUS, Physics::Const::JUPTIER_INCLINE, "Jupiter", BROWN);
-    Physics::Planet mercury = Physics::Planet(Physics::Const::MERCURY_SUN_DISTANCE, -Physics::Const::MERCURY_SPEED, Physics::Const::MERCURY_MASS, Physics::Const::MERCURY_RADIUS, Physics::Const::MERCURY_INCLINE, "Mercury", GRAY);
-    Physics::Planet venus   = Physics::Planet(Physics::Const::VENUS_SUN_DISTANCE,   -Physics::Const::VENUS_SPEED,   Physics::Const::VENUS_MASS,   Physics::Const::VENUS_RADIUS,   Physics::Const::VENUS_INCLINE,   "Venus",   RED);
-    Physics::Planet mars    = Physics::Planet(Physics::Const::MARS_SUN_DISTANCE,    -Physics::Const::MARS_SPEED,    Physics::Const::MARS_MASS,    Physics::Const::MARS_RADIUS,    Physics::Const::MARS_INCLINE,    "Mars",    ORANGE);
-    Physics::Planet saturn  = Physics::Planet(Physics::Const::SATURN_SUN_DISTANCE,  -Physics::Const::SATURN_SPEED,  Physics::Const::SATURN_MASS,  Physics::Const::SATURN_RADIUS,  Physics::Const::SATURN_INCLINE,  "Saturn",  VIOLET);
-    Physics::Planet uranus  = Physics::Planet(Physics::Const::URANUS_SUN_DISTANCE,  -Physics::Const::URANUS_SPEED,  Physics::Const::URANUS_MASS,  Physics::Const::URANUS_RADIUS,  Physics::Const::URANUS_INCLINE,  "Uranus",  SKYBLUE);
-    Physics::Planet neptun  = Physics::Planet(Physics::Const::NEPTUN_SUN_DISTANCE,  -Physics::Const::NEPTUN_SPEED,  Physics::Const::NEPTUN_MASS,  Physics::Const::NEPTUN_RADIUS,  Physics::Const::NEPTUN_INCLINE,  "Neptun",  DARKBLUE);
+    std::vector<Physics::RigidBody<FLOAT>> m_Bodies;
 public:
     Application() noexcept
     {
@@ -48,15 +38,15 @@ public:
         m_Camera.fovy = 45.0f;
         m_Camera.projection = CAMERA_PERSPECTIVE;
 
-        m_Bodies.push_back(&sun);
-        m_Bodies.push_back(&earth);
-        m_Bodies.push_back(&juptier);
-        m_Bodies.push_back(&mercury);
-        m_Bodies.push_back(&venus);
-        m_Bodies.push_back(&mars);
-        m_Bodies.push_back(&saturn);
-        m_Bodies.push_back(&uranus);
-        m_Bodies.push_back(&neptun);
+        m_Bodies.emplace_back(                                 0.0,                            0.0, Physics::Const::SUN_MASS,     Physics::Const::SUN_RADIUS,     Physics::Const::SUN_INCLINE,     "Sun",     YELLOW);
+        m_Bodies.emplace_back(Physics::Const::EARTH_SUN_DISTANCE,   -Physics::Const::EARTH_SPEED,   Physics::Const::EARTH_MASS,   Physics::Const::EARTH_RADIUS,   Physics::Const::EARTH_INCLINE,   "Earth",   BLUE);
+        m_Bodies.emplace_back(Physics::Const::JUPTIER_SUN_DISTANCE, -Physics::Const::JUPTIER_SPEED, Physics::Const::JUPITER_MASS, Physics::Const::JUPITER_RADIUS, Physics::Const::JUPTIER_INCLINE, "Jupiter", BROWN);
+        m_Bodies.emplace_back(Physics::Const::MERCURY_SUN_DISTANCE, -Physics::Const::MERCURY_SPEED, Physics::Const::MERCURY_MASS, Physics::Const::MERCURY_RADIUS, Physics::Const::MERCURY_INCLINE, "Mercury", GRAY);
+        m_Bodies.emplace_back(Physics::Const::VENUS_SUN_DISTANCE,   -Physics::Const::VENUS_SPEED,   Physics::Const::VENUS_MASS,   Physics::Const::VENUS_RADIUS,   Physics::Const::VENUS_INCLINE,   "Venus",   RED);
+        m_Bodies.emplace_back(Physics::Const::MARS_SUN_DISTANCE,    -Physics::Const::MARS_SPEED,    Physics::Const::MARS_MASS,    Physics::Const::MARS_RADIUS,    Physics::Const::MARS_INCLINE,    "Mars",    ORANGE);
+        m_Bodies.emplace_back(Physics::Const::SATURN_SUN_DISTANCE,  -Physics::Const::SATURN_SPEED,  Physics::Const::SATURN_MASS,  Physics::Const::SATURN_RADIUS,  Physics::Const::SATURN_INCLINE,  "Saturn",  VIOLET);
+        m_Bodies.emplace_back(Physics::Const::URANUS_SUN_DISTANCE,  -Physics::Const::URANUS_SPEED,  Physics::Const::URANUS_MASS,  Physics::Const::URANUS_RADIUS,  Physics::Const::URANUS_INCLINE,  "Uranus",  SKYBLUE);
+        m_Bodies.emplace_back(Physics::Const::NEPTUN_SUN_DISTANCE,  -Physics::Const::NEPTUN_SPEED,  Physics::Const::NEPTUN_MASS,  Physics::Const::NEPTUN_RADIUS,  Physics::Const::NEPTUN_INCLINE,  "Neptun",  DARKBLUE);
     }
 
     ~Application() noexcept
@@ -68,9 +58,9 @@ public:
     {
         if (dt < 0.1f) // We need atleast 10 FPS to simulate properly
         {
-            //Physics::VelocityVerlet(m_Bodies, TIME_STEP, dt);
-            //Physics::RungeKutta4th(m_Bodies, TIME_STEP, dt);
-            Physics::EulerIntegration(m_Bodies, TIME_STEP, dt);
+            //Physics::VelocityVerlet(&m_Bodies, TIME_STEP, dt);
+            //Physics::RungeKutta4th(&m_Bodies, TIME_STEP, dt);
+            Physics::EulerIntegration(&m_Bodies, TIME_STEP, dt);
         }
     }
 
@@ -118,7 +108,7 @@ public:
         {
             // Get their 3D position
             //Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector());
-            Vector3 pos = m_Bodies[i]->GetRenderPos();
+            Vector3 pos = m_Bodies[i].GetRenderPos();
             Matrix cameraMatrix = GetCameraMatrix(m_Camera);
             Vector4 cameraSpace = Vector4{ pos.x, pos.y, pos.z, 1.0f } *cameraMatrix;
 
@@ -130,8 +120,8 @@ public:
 
             // Draw label above the sphere
             DrawText(
-                m_Bodies[i]->GetLabel(),
-                (int)screenPos.x - MeasureText(m_Bodies[i]->GetLabel(), 20) / 2, // center horizontally
+                m_Bodies[i].GetLabel(),
+                (int)screenPos.x - MeasureText(m_Bodies[i].GetLabel(), 20) / 2, // center horizontally
                 (int)screenPos.y - 20, // move up 20px
                 20,
                 WHITE
@@ -146,7 +136,7 @@ public:
         BeginMode3D(m_Camera);
         // Draw coordinate axes
         Renderer::Draw3DGridWithAxes(100, 30.0f);
-        Renderer::RenderPlanets(m_Bodies, sun);
+        Renderer::RenderPlanets(&m_Bodies, m_Bodies[0]);
 
 
         //DrawLine3D(MetersToWorld(earth.GetPosition().ToRaylibVector()), MetersToWorld(moonA.GetPosition().ToRaylibVector()), RED);
@@ -184,13 +174,13 @@ public:
         static Physics::RigidBody<FLOAT>* stats = nullptr;
         for (size_t i = 0; i < m_Bodies.size(); i++)
         {
-            Vector3 pos = m_Bodies[i]->GetRenderPos();
+            Vector3 pos = m_Bodies[i].GetRenderPos();
 
-            RayCollision collision = GetRayCollisionSphere(ray, pos, m_Bodies[i]->GetRadius() / Renderer::Globals::RADIUS_SCALE);
+            RayCollision collision = GetRayCollisionSphere(ray, pos, m_Bodies[i].GetRadius() / Renderer::Globals::RADIUS_SCALE);
             if (collision.hit)
             {
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-                    stats = m_Bodies[i];
+                    stats = &m_Bodies[i];
                 break; // only one even if multiple are hit due to increased hitbox
             }
             else

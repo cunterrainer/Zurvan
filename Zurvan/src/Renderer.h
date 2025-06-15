@@ -51,12 +51,15 @@ namespace Renderer
     }
 
 
-    void RenderPlanets(std::vector<Physics::RigidBody<FLOAT>*>& bodies, const Physics::Planet& sun)
+    // Modifies the render position of bodies
+    void RenderPlanets(std::vector<Physics::RigidBody<FLOAT>>* bodies, const Physics::RigidBody<FLOAT>& sun)
     {
-        for (size_t i = 0; i < bodies.size(); i++)
+        std::vector<Physics::RigidBody<FLOAT>>& bodiesRef = *bodies;
+
+        for (size_t i = 0; i < bodiesRef.size(); i++)
         {
-            Vector3 pos = Renderer::MetersToWorld(bodies[i]->GetPosition().ToRaylibVector());
-            float renderedRadius = (float)(bodies[i]->GetRadius() / Renderer::Globals::RADIUS_SCALE);
+            Vector3 pos = Renderer::MetersToWorld(bodiesRef[i].GetPosition().ToRaylibVector());
+            float renderedRadius = (float)(bodiesRef[i].GetRadius() / Renderer::Globals::RADIUS_SCALE);
 
             // Quick and dirty fix to add the radius off the planet and the sun to it's position to
             // properly render it
@@ -66,8 +69,8 @@ namespace Renderer
                 pos = Vector3Add(pos, Vector3Scale(direction, renderedRadius)); // move forward by its rendered radius
                 pos = Vector3Add(pos, Vector3Scale(direction, sun.GetRadius() / Renderer::Globals::RADIUS_SCALE));
             }
-            bodies[i]->SetRenderPos(pos);
-            DrawSphere(pos, renderedRadius, bodies[i]->GetColor());
+            bodiesRef[i].SetRenderPos(pos);
+            DrawSphere(pos, renderedRadius, bodiesRef[i].GetColor());
         }
     }
 

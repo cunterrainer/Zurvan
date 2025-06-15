@@ -70,13 +70,32 @@ namespace Physics
 
 
     template <typename T>
-    struct RigidBody
+    class RigidBody
     {
     private:
-        Math::Vector3<T> m_Position;
+        Math::Vector3<T> m_Position; // using custom Vector3 hence we're able to use doubles instead of floats
         Math::Vector3<T> m_Velocity;
         T m_Mass = static_cast<T>(0);
+
+        // Just for the visuals, not effect on the simulation
+        Vector3 m_RenderPosition; // using raylibs Vector3 because it's only for visuals, will be set on the first time rendering
+        double m_Radius;
+        double m_Inclination;
+        const char* m_Label;
+        Color m_Color;
     public:
+        RigidBody(T distanceToCenter, T velocityAroundCenter, T mass, double radius, double inclination, const char* name, Color color)
+            : m_Mass(mass), m_Radius(radius), m_Inclination(inclination), m_Label(name), m_Color(color)
+        {
+            m_Position.x = distanceToCenter;
+            m_Position.y = distanceToCenter * static_cast<FLOAT>(std::sin(inclination));
+            m_Position.z = 0;
+
+            m_Velocity.x = 0;
+            m_Velocity.y = velocityAroundCenter * static_cast<FLOAT>(std::sin(inclination));
+            m_Velocity.z = velocityAroundCenter * static_cast<FLOAT>(std::cos(inclination));
+        }
+
         Math::Vector3<T> ComputeAcceleration(const RigidBody& other) const noexcept
         {
             Math::Vector3<T> direction = other.m_Position - m_Position;
@@ -88,27 +107,34 @@ namespace Physics
             return direction;
         }
 
-        void SetPosition(T x, T y, T z) noexcept
+        constexpr void SetRenderPos(const Vector3& pos) noexcept
+        {
+            m_RenderPosition.x = pos.x;
+            m_RenderPosition.y = pos.y;
+            m_RenderPosition.z = pos.z;
+        }
+
+        constexpr void SetPosition(T x, T y, T z) noexcept
         {
             m_Position = Math::Vector3<T>(x, y, z);
         }
 
-        void SetPosition(const Math::Vector3<T>& v) noexcept
+        constexpr void SetPosition(const Math::Vector3<T>& v) noexcept
         {
             m_Position = v;
         }
 
-        void SetVelocity(T x, T y, T z) noexcept
+        constexpr void SetVelocity(T x, T y, T z) noexcept
         {
             m_Velocity = Math::Vector3<T>(x, y, z);
         }
 
-        void SetVelocity(const Math::Vector3<T>& v) noexcept
+        constexpr void SetVelocity(const Math::Vector3<T>& v) noexcept
         {
             m_Velocity = v;
         }
 
-        void SetMass(T m) noexcept
+        constexpr void SetMass(T m) noexcept
         {
             m_Mass = m;
         }
@@ -128,79 +154,24 @@ namespace Physics
             return m_Mass;
         }
 
-        virtual Color GetColor() const noexcept = 0;
-        virtual void SetRenderPos(Vector3 pos) noexcept = 0;
-        virtual double GetRadius() const noexcept = 0;
-        virtual const char* GetLabel() const noexcept = 0;
-        virtual Vector3 GetRenderPos() const noexcept = 0;
-    };
-
-
-    class Planet : public RigidBody<FLOAT>
-    {
-    private:
-        double m_Radius = 0.0;
-        double m_Inclination = 0.0;
-        const char* m_Name = nullptr;
-        Color m_Color = WHITE;
-        Vector3 m_RenderPos;
-    public:
-        Planet() = default;
-
-        Planet(FLOAT distanceToSun, FLOAT speedAroundSun, FLOAT mass, double radius, double inclination, const char* name, Color color)
-            : m_Radius(radius), m_Inclination(inclination), m_Name(name), m_Color(color)
-        {
-            const FLOAT x = distanceToSun;
-            const FLOAT y = distanceToSun * static_cast<FLOAT>(std::sin(inclination));
-            const FLOAT z = 0;
-            SetPosition(x, y, z);
-
-            const FLOAT vx = 0;
-            const FLOAT vy = speedAroundSun * static_cast<FLOAT>(std::sin(inclination));
-            const FLOAT vz = speedAroundSun * static_cast<FLOAT>(std::cos(inclination));
-            SetVelocity(vx, vy, vz);
-
-            SetMass(mass);
-        }
-
-        constexpr void SetColor(Color color) noexcept
-        {
-            m_Color = color;
-        }
-
-        constexpr void SetRadius(double radius) noexcept
-        {
-            m_Radius = radius;
-        }
-
-        constexpr void SetLabel(const char* label) noexcept
-        {
-            m_Name = label;
-        }
-
-        inline void SetRenderPos(Vector3 pos) noexcept
-        {
-            m_RenderPos = pos;
-        }
-
-        inline Color GetColor() const noexcept
+        constexpr Color GetColor() const noexcept
         {
             return m_Color;
         }
 
-        inline double GetRadius() const noexcept
+        constexpr Vector3 GetRenderPos() const noexcept
+        {
+            return m_RenderPosition;
+        }
+
+        constexpr double GetRadius() const noexcept
         {
             return m_Radius;
         }
 
-        inline const char* GetLabel() const noexcept
+        constexpr const char* GetLabel() const noexcept
         {
-            return m_Name;
-        }
-
-        inline Vector3 GetRenderPos() const noexcept
-        {
-            return m_RenderPos;
+            return m_Label;
         }
     };
 
@@ -213,101 +184,106 @@ namespace Physics
 
         for (int i = 0; i < count; i++)
         {
-            totalMass += bodies[i]->GetMass();
-            weighted += bodies[i]->GetPosition() * bodies[i]->GetMass();
+            totalMass += bodies[i].GetMass();
+            weighted += bodies[i].GetPosition() * bodies[i].GetMass();
         }
 
         return weighted * (static_cast<T>(1) / totalMass);
     }
 
 
-    void EulerIntegration(const std::vector<Physics::RigidBody<FLOAT>*>& bodies, double timeStep, float dt) noexcept
+    void EulerIntegration(std::vector<Physics::RigidBody<FLOAT>>* bodies, double timeStep, float dt) noexcept
     {
-        for (size_t i = 0; i < bodies.size(); ++i)
+        std::vector<Physics::RigidBody<FLOAT>>& bodiesRef = *bodies;
+
+        for (size_t i = 0; i < bodiesRef.size(); ++i)
         {
             Math::Vector3<FLOAT> acc;
-            for (size_t k = 0; k < bodies.size(); ++k)
+            for (size_t k = 0; k < bodiesRef.size(); ++k)
             {
                 if (i != k)
                 {
-                    Math::Vector3<FLOAT> a = bodies[i]->ComputeAcceleration(*bodies[k]);
+                    Math::Vector3<FLOAT> a = bodiesRef[i].ComputeAcceleration(bodiesRef[k]);
                     acc += a;
                 }
             }
-            bodies[i]->SetVelocity(bodies[i]->GetVelocity() + (acc * (timeStep * dt)));
-            bodies[i]->SetPosition(bodies[i]->GetPosition() + (bodies[i]->GetVelocity() * (timeStep * dt)));
+            bodiesRef[i].SetVelocity(bodiesRef[i].GetVelocity() + (acc * (timeStep * dt)));
+            bodiesRef[i].SetPosition(bodiesRef[i].GetPosition() + (bodiesRef[i].GetVelocity() * (timeStep * dt)));
         }
     }
 
 
-    void VelocityVerlet(const std::vector<Physics::RigidBody<FLOAT>*>& bodies, double timeStep, float delatTime) noexcept
+    void VelocityVerlet(std::vector<Physics::RigidBody<FLOAT>>* bodies, double timeStep, float delatTime) noexcept
     {
-        std::vector<Math::Vector3<FLOAT>> oldAccelerations(bodies.size());
+        std::vector<Physics::RigidBody<FLOAT>>& bodiesRef = *bodies;
+        std::vector<Math::Vector3<FLOAT>> oldAccelerations(bodiesRef.size());
 
         // First, compute all initial accelerations
-        for (size_t i = 0; i < bodies.size(); ++i)
+        for (size_t i = 0; i < bodiesRef.size(); ++i)
         {
             Math::Vector3<FLOAT> acc;
-            for (size_t j = 0; j < bodies.size(); ++j)
+            for (size_t j = 0; j < bodiesRef.size(); ++j)
             {
                 if (i != j)
-                    acc += bodies[i]->ComputeAcceleration(*bodies[j]);
+                    acc += bodiesRef[i].ComputeAcceleration(bodiesRef[j]);
             }
             oldAccelerations[i] = acc;
         }
 
         // Now do Velocity Verlet integration
-        for (size_t i = 0; i < bodies.size(); ++i)
+        for (size_t i = 0; i < bodiesRef.size(); ++i)
         {
             const FLOAT dt = static_cast<FLOAT>(timeStep * delatTime);
 
-            auto pos = bodies[i]->GetPosition();
-            auto vel = bodies[i]->GetVelocity();
+            auto pos = bodiesRef[i].GetPosition();
+            auto vel = bodiesRef[i].GetVelocity();
             auto acc = oldAccelerations[i];
 
             // Update position
             Math::Vector3<FLOAT> newPos = pos + vel * dt + acc * (0.5 * dt * dt);
-            bodies[i]->SetPosition(newPos);
+            bodiesRef[i].SetPosition(newPos);
         }
 
         // Recompute accelerations at new positions
-        std::vector<Math::Vector3<FLOAT>> newAccelerations(bodies.size());
-        for (size_t i = 0; i < bodies.size(); ++i)
+        std::vector<Math::Vector3<FLOAT>> newAccelerations(bodiesRef.size());
+        for (size_t i = 0; i < bodiesRef.size(); ++i)
         {
             Math::Vector3<FLOAT> acc;
-            for (size_t j = 0; j < bodies.size(); ++j)
+            for (size_t j = 0; j < bodiesRef.size(); ++j)
             {
                 if (i != j)
-                    acc += bodies[i]->ComputeAcceleration(*bodies[j]);
+                    acc += bodiesRef[i].ComputeAcceleration(bodiesRef[j]);
             }
             newAccelerations[i] = acc;
         }
 
         // Update velocities using average of old and new accelerations
-        for (size_t i = 0; i < bodies.size(); ++i)
+        for (size_t i = 0; i < bodiesRef.size(); ++i)
         {
             const FLOAT dt = static_cast<FLOAT>(timeStep * delatTime);
 
-            auto vel = bodies[i]->GetVelocity();
+            auto vel = bodiesRef[i].GetVelocity();
             auto accOld = oldAccelerations[i];
             auto accNew = newAccelerations[i];
 
             Math::Vector3<FLOAT> newVel = vel + (accOld + accNew) * (0.5 * dt);
-            bodies[i]->SetVelocity(newVel);
+            bodiesRef[i].SetVelocity(newVel);
         }
     }
 
 
-    void RungeKutta4th(const std::vector<Physics::RigidBody<FLOAT>*>& bodies, double timeStep, float delatTime)
+    void RungeKutta4th(std::vector<Physics::RigidBody<FLOAT>>* bodies, double timeStep, float delatTime)
     {
+        std::vector<Physics::RigidBody<FLOAT>>& bodiesRef = *bodies;
+
         const FLOAT dt = static_cast<FLOAT>(timeStep * delatTime);
-        const size_t N = bodies.size();
+        const size_t N = bodiesRef.size();
         
         // Snapshot of initial state
         std::vector<Math::Vector3<FLOAT>> positions(N), velocities(N);
         for (size_t i = 0; i < N; ++i) {
-            positions[i] = bodies[i]->GetPosition();
-            velocities[i] = bodies[i]->GetVelocity();
+            positions[i] = bodiesRef[i].GetPosition();
+            velocities[i] = bodiesRef[i].GetVelocity();
         }
         
         // Helper: Compute all accelerations from positions
@@ -320,7 +296,7 @@ namespace Physics
                         Math::Vector3<FLOAT> dir = pos[j] - pos[i];
                         FLOAT dist = dir.Length();
                         if (dist < 1.0) dist = 1.0;
-                        FLOAT force = static_cast<FLOAT>(Physics::Const::G * bodies[j]->GetMass()) / (dist * dist);
+                        FLOAT force = static_cast<FLOAT>(Physics::Const::G * bodiesRef[j].GetMass()) / (dist * dist);
                         acc += dir.Normalize() * force;
                     }
                 }
@@ -383,8 +359,8 @@ namespace Physics
             Math::Vector3<FLOAT> newVel = velocities[i] + (k1_v[i] + k2_v[i] * 2.0 + k3_v[i] * 2.0 + k4_v[i]) / 6.0;
             Math::Vector3<FLOAT> newPos = positions[i] + (k1_p[i] + k2_p[i] * 2.0 + k3_p[i] * 2.0 + k4_p[i]) / 6.0;
         
-            bodies[i]->SetVelocity(newVel);
-            bodies[i]->SetPosition(newPos);
+            bodiesRef[i].SetVelocity(newVel);
+            bodiesRef[i].SetPosition(newPos);
         }
     }
 }
