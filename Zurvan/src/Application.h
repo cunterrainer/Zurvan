@@ -16,6 +16,7 @@ private:
 private:
     int m_ScreenWidth = 1280; // TODO remove if only needed for creating the window
     int m_ScreenHeight = 780;
+    bool m_ShowInfoText = true;
     double m_ElapsedTime = 0.0;
     double m_SimulationTime = 0.0;
     const char* m_Title = "Zurvan";
@@ -23,6 +24,7 @@ private:
     Camera3D m_Camera;
     SettingsWindow m_SettingsWindow;
     std::vector<Physics::RigidBody<FLOAT>> m_Bodies;
+    std::chrono::steady_clock::time_point m_InfoTimer;
 public:
     Application() noexcept
     {
@@ -47,6 +49,8 @@ public:
         m_Bodies.emplace_back(Physics::Const::SATURN_SUN_DISTANCE,  -Physics::Const::SATURN_SPEED,  Physics::Const::SATURN_MASS,  Physics::Const::SATURN_RADIUS,  Physics::Const::SATURN_INCLINE,  "Saturn",  VIOLET);
         m_Bodies.emplace_back(Physics::Const::URANUS_SUN_DISTANCE,  -Physics::Const::URANUS_SPEED,  Physics::Const::URANUS_MASS,  Physics::Const::URANUS_RADIUS,  Physics::Const::URANUS_INCLINE,  "Uranus",  SKYBLUE);
         m_Bodies.emplace_back(Physics::Const::NEPTUN_SUN_DISTANCE,  -Physics::Const::NEPTUN_SPEED,  Physics::Const::NEPTUN_MASS,  Physics::Const::NEPTUN_RADIUS,  Physics::Const::NEPTUN_INCLINE,  "Neptun",  DARKBLUE);
+    
+        m_InfoTimer = std::chrono::steady_clock::now();
     }
 
     ~Application() noexcept
@@ -69,6 +73,14 @@ public:
         while (!WindowShouldClose())
         {
             const float dt = GetFrameTime();
+
+            if (m_ShowInfoText)
+            {
+                auto endInfoTimer = std::chrono::steady_clock::now();
+                const double infoTime = std::chrono::duration<double, std::milli>(endInfoTimer - m_InfoTimer).count();
+                if (infoTime > 5000) // 5 secs
+                    m_ShowInfoText = false;
+            }
 
             auto start = std::chrono::high_resolution_clock::now();
             Simulate(dt);
@@ -160,6 +172,13 @@ public:
 
         snprintf(dayText, 64, "Simulation time: %.4f ms", m_SimulationTime);
         DrawText(dayText, 10, 60, 20, WHITE);
+
+        if (m_ShowInfoText)
+        {
+            std::strncpy(dayText, "Press F1 to open the settings window", 64);
+            MeasureText(dayText, 20);
+            DrawText(dayText, (GetScreenWidth() - MeasureText(dayText, 20)) / 2, 10, 20, WHITE);
+        }
 
         m_SettingsWindow.Draw();
 
