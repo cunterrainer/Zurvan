@@ -95,10 +95,22 @@ public:
 
     static void RenderCoordinateAxis(const Camera& camera) noexcept
     {
+        const Vector3 axisX = { 105, 0, 0 };
+        const Vector3 axisY = { 0, 105, 0 };
+        const Vector3 axisZ = { 0, 0, 105 };
+
+        const Matrix cameraMatrix = GetCameraMatrix(camera);
+        const Vector4 cameraSpaceX = Vector4{ axisX.x, axisX.y, axisX.z, 1.0f } * cameraMatrix;
+        const Vector4 cameraSpaceY = Vector4{ axisY.x, axisY.y, axisY.z, 1.0f } * cameraMatrix;
+        const Vector4 cameraSpaceZ = Vector4{ axisZ.x, axisZ.y, axisZ.z, 1.0f } * cameraMatrix;
+
+        if (cameraSpaceX.z > 0 || cameraSpaceY.z > 0 || cameraSpaceZ.z > 0) // body not visible
+            return;
+
         // Example positions from world space
-        const Vector2 screenX = GetWorldToScreen(Vector3{ 105, 0, 0 }, camera);
-        const Vector2 screenY = GetWorldToScreen(Vector3{ 0, 105, 0 }, camera);
-        const Vector2 screenZ = GetWorldToScreen(Vector3{ 0, 0, 105 }, camera);
+        const Vector2 screenX = GetWorldToScreen(axisX, camera);
+        const Vector2 screenY = GetWorldToScreen(axisY, camera);
+        const Vector2 screenZ = GetWorldToScreen(axisZ, camera);
 
         // Get text width/height for centering
         const int widthX = MeasureText("X", Renderer::FontSize);
