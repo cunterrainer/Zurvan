@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <utility>
+#include <cstring>
 
 #include "raylib.h"
 
@@ -23,6 +24,7 @@ private:
 
     Camera3D m_Camera;
     SettingsWindow m_SettingsWindow;
+    Physics::RigidBody<FLOAT>* m_SelectedBody;
     std::vector<Physics::RigidBody<FLOAT>> m_Bodies;
     std::chrono::steady_clock::time_point m_InfoTimer;
 public:
@@ -50,12 +52,23 @@ public:
         m_Bodies.emplace_back(Physics::Const::URANUS_SUN_DISTANCE,  -Physics::Const::URANUS_SPEED,  Physics::Const::URANUS_MASS,  Physics::Const::URANUS_RADIUS,  Physics::Const::URANUS_INCLINE,  "Uranus",  SKYBLUE);
         m_Bodies.emplace_back(Physics::Const::NEPTUN_SUN_DISTANCE,  -Physics::Const::NEPTUN_SPEED,  Physics::Const::NEPTUN_MASS,  Physics::Const::NEPTUN_RADIUS,  Physics::Const::NEPTUN_INCLINE,  "Neptun",  DARKBLUE);
     
+        m_SelectedBody = nullptr;
         m_InfoTimer = std::chrono::steady_clock::now();
     }
 
     ~Application() noexcept
     {
         TerminateWindow();
+    }
+
+    constexpr int ScreenWidth() const noexcept
+    {
+        return m_ScreenWidth;
+    }
+
+    constexpr int ScreenHeight() const noexcept
+    {
+        return m_ScreenHeight;
     }
 
     void Simulate(float dt)
@@ -68,6 +81,40 @@ public:
         }
     }
 
+    void OnUpdate() noexcept
+    {
+        if (IsWindowResized())
+        {
+            m_ScreenHeight = GetScreenHeight();
+            m_ScreenWidth = GetScreenWidth();
+        }
+
+        if (!m_SettingsWindow.Visible())
+            UpdateCameraOverride(&m_Camera, CAMERA_FREE);
+
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            // ray cast check if player clicked on a planet
+            const Vector2 center = { ScreenWidth() / 2.0f, ScreenHeight() / 2.0f };
+            const Ray ray = GetScreenToWorldRay(center, m_Camera);
+
+            for (size_t i = 0; i < m_Bodies.size(); i++)
+            {
+                const Vector3 pos = m_Bodies[i].GetRenderPos();
+                const float radius = (m_Bodies[i].GetRadius() / Renderer::Globals::RADIUS_SCALE) + 30;
+
+                const RayCollision collision = GetRayCollisionSphere(ray, pos, radius);
+                if (collision.hit)
+                {
+                    m_SelectedBody = &m_Bodies[i];
+                    break; // only one even if multiple are hit due to increased hitbox
+                }
+                else
+                    m_SelectedBody = nullptr;
+            }
+        }
+    }
+
     void Run() noexcept
     {
         while (!WindowShouldClose())
@@ -76,19 +123,18 @@ public:
 
             if (m_ShowInfoText)
             {
-                auto endInfoTimer = std::chrono::steady_clock::now();
+                const auto endInfoTimer = std::chrono::steady_clock::now();
                 const double infoTime = std::chrono::duration<double, std::milli>(endInfoTimer - m_InfoTimer).count();
                 if (infoTime > 5000) // 5 secs
                     m_ShowInfoText = false;
             }
 
-            auto start = std::chrono::high_resolution_clock::now();
+            const auto start = std::chrono::high_resolution_clock::now();
             Simulate(dt);
-            auto end = std::chrono::high_resolution_clock::now();
+            const auto end = std::chrono::high_resolution_clock::now();
             m_SimulationTime = std::chrono::duration<double, std::milli>(end - start).count();
 
-            if (!m_SettingsWindow.Visible())
-                UpdateCameraOverride(&m_Camera, CAMERA_FREE);
+            OnUpdate();
 
             BeginDrawing();
             Render();
@@ -182,31 +228,9 @@ public:
 
         m_SettingsWindow.Draw();
 
-        // Draw Center
-        Vector2 center = {
-            GetScreenWidth() / 2.0f,
-            GetScreenHeight() / 2.0f
-        };
-        DrawCircle(GetScreenWidth() / 2, GetScreenHeight() / 2, 1, WHITE);
-        Ray ray = GetScreenToWorldRay(center, m_Camera);
+        
+        DrawCircle(ScreenWidth() / 2, ScreenHeight() / 2, 1, WHITE);
 
-        static Physics::RigidBody<FLOAT>* stats = nullptr;
-        for (size_t i = 0; i < m_Bodies.size(); i++)
-        {
-            Vector3 pos = m_Bodies[i].GetRenderPos();
-
-            RayCollision collision = GetRayCollisionSphere(ray, pos, (m_Bodies[i].GetRadius() / Renderer::Globals::RADIUS_SCALE) + 30);
-            if (collision.hit)
-            {
-                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-                    stats = &m_Bodies[i];
-                break; // only one even if multiple are hit due to increased hitbox
-            }
-            else
-                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-                    stats = nullptr;
-        }
-
-        Renderer::RenderPlanetStats(stats);
+        Renderer::RenderPlanetStats(m_SelectedBody);
     }
 };
