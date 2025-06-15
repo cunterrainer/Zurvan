@@ -22,6 +22,12 @@ filter "system:linux"
 filter "system:macosx"
     platforms "universal"
 
+filter "platforms:x86"
+    architecture "x86"
+filter "platforms:x64"
+    architecture "x86_64"
+filter "platforms:universal"
+    architecture "universal"
 
 filter { "configurations:Debug" }
     runtime "Debug"
