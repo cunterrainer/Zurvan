@@ -28,7 +28,7 @@ private:
     std::chrono::steady_clock::time_point m_InfoTimer;
 public:
     Application(int width, int height) noexcept;
-    ~Application() noexcept;
+    ~Application() noexcept = default;
 
     constexpr int ScreenWidth() const noexcept;
     constexpr int ScreenHeight() const noexcept;
@@ -36,10 +36,6 @@ public:
 
     void Simulate(float dt);
     void OnUpdate(float dt) noexcept;
-    void Draw3DGridWithAxes(int size, float spacing) const noexcept;
     void RenderPlanets(std::vector<Physics::RigidBody<FLOAT>>* bodies, const Physics::RigidBody<FLOAT>& sun) const;
-    void RenderPlanetStats() const noexcept;
-    void RenderStats() const noexcept;
-    void RenderCoordinateAxis();
     void OnRender();
 };
