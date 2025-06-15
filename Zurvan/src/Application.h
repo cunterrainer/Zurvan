@@ -167,8 +167,9 @@ public:
             // Get their 3D position
             //Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector());
             Vector3 pos = m_Bodies[i].GetRenderPos();
+            pos.y = pos.y + m_Bodies[i].GetRadius() / Renderer::Globals::RADIUS_SCALE;
             Matrix cameraMatrix = GetCameraMatrix(m_Camera);
-            Vector4 cameraSpace = Vector4{ pos.x, pos.y, pos.z, 1.0f } *cameraMatrix;
+            Vector4 cameraSpace = Vector4{ pos.x, pos.y, pos.z, 1.0f } * cameraMatrix;
 
             if (cameraSpace.z > 0)
                 continue;
