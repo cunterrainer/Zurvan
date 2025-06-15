@@ -3,6 +3,7 @@ project "raylib"
     kind "StaticLib"
     defines "PLATFORM_DESKTOP_GLFW" -- PLATFORM_DESKTOP_RGFW
     warnings "off"
+    externalwarnings "off"
 
     files {
         "src/**.h",
@@ -25,9 +26,6 @@ project "raylib"
 
     filter "toolset:gcc* or toolset:clang*"
         disablewarnings "implicit-function-declaration"
-
-    filter { "configurations:Release", "toolset:gcc* or toolset:clang*" }
-        buildoptions { "-ffunction-sections", "-fdata-sections" } -- places each function and data item in its own section
 
     filter "system:windows"
         defines "_CRT_SECURE_NO_WARNINGS"

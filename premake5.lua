@@ -27,12 +27,14 @@ filter { "configurations:Debug" }
     runtime "Debug"
     symbols "on"
     optimize "off"
+    floatingpoint "Default"
 
 filter { "configurations:Release" }
     runtime "Release"
     symbols "on"
     optimize "Speed"
     defines "NDEBUG"
+    floatingpoint "fast"
     flags "LinkTimeOptimization"
 
 filter { "configurations:Distribution" }
@@ -40,6 +42,7 @@ filter { "configurations:Distribution" }
     symbols "off"
     optimize "Full"
     defines "NDEBUG"
+    floatingpoint "fast"
     flags "LinkTimeOptimization"
 
 filter { "configurations:MinSizeDistribution" }
@@ -47,13 +50,31 @@ filter { "configurations:MinSizeDistribution" }
     symbols "off"
     optimize "Size"
     defines "NDEBUG"
+    floatingpoint "fast"
     flags "LinkTimeOptimization"
+
+
+filter { "configurations:Release or configurations:Distribution or configurations:MinSizeDistribution", "toolset:gcc*" }
+    buildoptions { "-ffunction-sections", "-fdata-sections" } -- places each function and data item in its own section
+    linkoptions { "-Wl,--gc-sections" } -- remove unused sections (code)
+
+filter { "system:linux or system:macosx", "configurations:Release or configurations:Distribution or configurations:MinSizeDistribution", "toolset:clang*" }
+    buildoptions { "-ffunction-sections", "-fdata-sections" } -- places each function and data item in its own section
+    linkoptions { "-Wl,--gc-sections" } -- remove unused sections (code)
+
+filter { "system:windows", "configurations:Release or configurations:Distribution or configurations:MinSizeDistribution", "toolset:clang*" }
+    buildoptions { "-ffunction-sections", "-fdata-sections" } -- places each function and data item in its own section
+    linkoptions { "-fuse-ld=lld", "-Wl,/OPT:REF,/OPT:ICF" } -- remove unused sections (code)
+
+filter { "configurations:Release or configurations:Distribution or configurations:MinSizeDistribution", "toolset:msc*" }
+    linkoptions { "/OPT:REF", "/OPT:ICF" } -- remove unused sections (code)
 filter {}
 
 -- only for visual studio
 flags {
     "MultiProcessorCompile"
 }
+linkgroups "off"
 staticruntime "on"
 removeunreferencedcodedata "on"
 
