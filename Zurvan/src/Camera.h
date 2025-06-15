@@ -14,7 +14,7 @@ namespace CameraConst
 
 // Override the default raylib UpdateCamera to properly adjust speeds e.g. move speed
 // without modifying raylibs source code for easier upgradability
-void UpdateCameraOverride(Camera* camera, int mode)
+inline void UpdateCameraOverride(Camera* camera, int mode)
 {
     Vector2 mousePositionDelta = GetMouseDelta();
 

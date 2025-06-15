@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math.h"
+#include "Config.h"
 
 namespace Physics
 {
@@ -177,7 +178,7 @@ namespace Physics
 
 
     template <typename T>
-    Math::Vector3<T> ComputeBarycenter(Physics::RigidBody<T>* bodies[], int count)
+    constexpr Math::Vector3<T> ComputeBarycenter(Physics::RigidBody<T>* bodies[], int count)
     {
         T totalMass = static_cast<T>(0);
         Math::Vector3<T> weighted;
@@ -192,7 +193,7 @@ namespace Physics
     }
 
 
-    void EulerIntegration(std::vector<Physics::RigidBody<FLOAT>>* bodies, double timeStep, float dt) noexcept
+    inline void EulerIntegration(std::vector<Physics::RigidBody<FLOAT>>* bodies, double timeStep, float dt) noexcept
     {
         std::vector<Physics::RigidBody<FLOAT>>& bodiesRef = *bodies;
 
@@ -213,7 +214,7 @@ namespace Physics
     }
 
 
-    void VelocityVerlet(std::vector<Physics::RigidBody<FLOAT>>* bodies, double timeStep, float delatTime) noexcept
+    inline void VelocityVerlet(std::vector<Physics::RigidBody<FLOAT>>* bodies, double timeStep, float delatTime) noexcept
     {
         std::vector<Physics::RigidBody<FLOAT>>& bodiesRef = *bodies;
         std::vector<Math::Vector3<FLOAT>> oldAccelerations(bodiesRef.size());
@@ -272,7 +273,7 @@ namespace Physics
     }
 
 
-    void RungeKutta4th(std::vector<Physics::RigidBody<FLOAT>>* bodies, double timeStep, float delatTime)
+    inline void RungeKutta4th(std::vector<Physics::RigidBody<FLOAT>>* bodies, double timeStep, float delatTime)
     {
         std::vector<Physics::RigidBody<FLOAT>>& bodiesRef = *bodies;
 

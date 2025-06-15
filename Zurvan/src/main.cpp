@@ -4,23 +4,6 @@
     We have overridden the default RL_CULL_DISTANCE_FAR clipping distance (original 1000.0) to 20000.0
 */
 
-#include <ctime>
-#include <cstdio>
-#include <vector>
-#include <chrono>
-#include <string>
-#include <cassert>
-#include <sstream>
-#include <iostream>
-
-#include "raygui.h"
-#include "raylib.h"
-
-using FLOAT = double;
-#include "GUI.h"
-#include "Math.h"
-#include "Camera.h"
-#include "Physics.h"
 #include "Application.h"
 
 const double MOON_MASS = 7.347e22; // kg
