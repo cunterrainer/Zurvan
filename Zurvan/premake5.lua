@@ -46,6 +46,12 @@ project "Zurvan"
         linkoptions "-framework AppKit -framework iokit -framework OpenGl"
         disablewarnings { "sign-conversion" }
 
+    filter "system:emscripten"
+        linkoptions { "-sUSE_GLFW=3", "-sASYNCIFY", "-sMIN_WEBGL_VERSION=2", "-sMAX_WEBGL_VERSION=2", "-sALLOW_MEMORY_GROWTH=1", "-sUSE_PTHREADS=1" }
+
+    filter { "system:emscripten", "configurations:not Debug" }
+        linkoptions "--memory-init-file 0"
+
     filter "configurations:Debug"
         warnings "off"
         externalwarnings "off"

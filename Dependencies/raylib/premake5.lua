@@ -1,7 +1,6 @@
 project "raylib"
     language "C"
     kind "StaticLib"
-    defines "PLATFORM_DESKTOP_GLFW" -- PLATFORM_DESKTOP_RGFW
     warnings "off"
     externalwarnings "off"
 
@@ -13,13 +12,19 @@ project "raylib"
         "src/rtext.c",
         "src/rtextures.c",
         "src/utils.c",
-        "src/rglfw.c",
         "src/raudio.c"
     }
 
     includedirs {
         "src/external/glfw/include"
     }
+
+    filter "system:not emscripten"
+        defines "PLATFORM_DESKTOP_GLFW" -- PLATFORM_DESKTOP_RGFW
+        files "src/rglfw.c"
+
+    filter "system:emscripten"
+        defines { "PLATFORM_WEB", "GRAPHICS_API_OPENGL_ES2" }
 
     filter { "system:macosx", "files:src/rglfw.c" }
         compileas "Objective-C"

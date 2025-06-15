@@ -14,13 +14,15 @@ objdir(cwd .. outputdir .. "bin-int")
 
 RaylibDir = cwd .. "/Dependencies/raylib"
 
-
 filter "system:windows"
     platforms { "x64", "x86" }
 filter "system:linux"
     platforms "x64"
 filter "system:macosx"
     platforms "universal"
+filter "system:emscripten" -- wasm
+    platforms { "wasm32", "wasm64" }
+    targetextension ".html" -- we want to get the .js and .html files aswell as the .wasm file
 
 filter "platforms:x86"
     architecture "x86"
@@ -28,6 +30,10 @@ filter "platforms:x64"
     architecture "x86_64"
 filter "platforms:universal"
     architecture "universal"
+filter "platforms:wasm32"
+    architecture "wasm32"
+filter "platforms:wasm64"
+    architecture "wasm64"
 
 filter { "configurations:Debug" }
     runtime "Debug"

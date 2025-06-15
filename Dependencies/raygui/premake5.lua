@@ -3,7 +3,7 @@ project "raygui"
     kind "StaticLib"
     warnings "off"
     externalwarnings "off"
-
+    
     files {
         "src/**.h",
         "src/**.c"
