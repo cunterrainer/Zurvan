@@ -51,7 +51,7 @@ filter { "configurations:Release" }
     optimize "Speed"
     defines "NDEBUG"
     floatingpoint "fast"
-    flags "LinkTimeOptimization"
+    linktimeoptimization "on"
 
 filter { "configurations:Distribution" }
     runtime "Release"
@@ -59,7 +59,7 @@ filter { "configurations:Distribution" }
     optimize "Full"
     defines "NDEBUG"
     floatingpoint "fast"
-    flags "LinkTimeOptimization"
+    linktimeoptimization "on"
 
 filter { "configurations:MinSizeDistribution" }
     runtime "Release"
@@ -67,7 +67,7 @@ filter { "configurations:MinSizeDistribution" }
     optimize "Size"
     defines "NDEBUG"
     floatingpoint "fast"
-    flags "LinkTimeOptimization"
+    linktimeoptimization "on"
 
 
 filter { "configurations:Release or configurations:Distribution or configurations:MinSizeDistribution", "toolset:gcc*" }

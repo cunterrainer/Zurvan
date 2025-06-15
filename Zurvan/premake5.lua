@@ -126,15 +126,15 @@ project "Zurvan"
 
     filter { "configurations:Release" }
         kind "ConsoleApp"
-        flags "FatalWarnings"
+        fatalwarnings { "All" }
 
     filter { "configurations:Distribution" }
         kind "WindowedApp"
         entrypoint "mainCRTStartup"
-        flags "FatalWarnings"
+        fatalwarnings { "All" }
 
     filter { "configurations:MinSizeDistribution" }
         kind "WindowedApp"
         entrypoint "mainCRTStartup"
-        flags "FatalWarnings"
+        fatalwarnings { "All" }
     filter {}
