@@ -36,10 +36,10 @@ public:
 
         m_SettingsWindow.Init();
 
-        m_Camera.position = Vector3{ 500.0f, 500.0f, 300.0f };
-        m_Camera.target = Vector3{ 0.0f, 0.0f, 0.0f };
+        m_Camera.position = Vector3{ 250.0f, 1900.0f, 3350.0f };
+        m_Camera.target = Vector3{ 1700.0f, 350.0f, 140.0f };
         m_Camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
-        m_Camera.fovy = 45.0f;
+        m_Camera.fovy = 60;
         m_Camera.projection = CAMERA_PERSPECTIVE;
 
         m_Bodies.emplace_back(                                 0.0,                            0.0, Physics::Const::SUN_MASS,     Physics::Const::SUN_RADIUS,     Physics::Const::SUN_INCLINE,     "Sun",     YELLOW);
