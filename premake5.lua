@@ -1,7 +1,9 @@
 workspace "Zurvan"
     configurations {
         "Debug",
-        "Release"
+        "Release",
+        "Distribution",
+        "MinSizeDistribution"
     }
     startproject "Zurvan"
 
@@ -20,15 +22,31 @@ filter "system:linux"
 filter "system:macosx"
     platforms "universal"
 
+
 filter { "configurations:Debug" }
     runtime "Debug"
     symbols "on"
     optimize "off"
+
 filter { "configurations:Release" }
     runtime "Release"
-    symbols "off"
-    defines "NDEBUG"
+    symbols "on"
     optimize "Speed"
+    defines "NDEBUG"
+    flags "LinkTimeOptimization"
+
+filter { "configurations:Distribution" }
+    runtime "Release"
+    symbols "off"
+    optimize "Full"
+    defines "NDEBUG"
+    flags "LinkTimeOptimization"
+
+filter { "configurations:MinSizeDistribution" }
+    runtime "Release"
+    symbols "off"
+    optimize "Size"
+    defines "NDEBUG"
     flags "LinkTimeOptimization"
 filter {}
 
