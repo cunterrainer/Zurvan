@@ -35,10 +35,11 @@ public:
     void SetScreenSize(int width, int height) noexcept;
 
     void Simulate(float dt);
-    void OnUpdate() noexcept;
+    void OnUpdate(float dt) noexcept;
     void Draw3DGridWithAxes(int size, float spacing) const noexcept;
-    void RenderPlanets(std::vector<Physics::RigidBody<FLOAT>>* bodies, const Physics::RigidBody<FLOAT>& sun);
-    void RenderPlanetStats(Physics::RigidBody<FLOAT>* stats);
+    void RenderPlanets(std::vector<Physics::RigidBody<FLOAT>>* bodies, const Physics::RigidBody<FLOAT>& sun) const;
+    void RenderPlanetStats() const noexcept;
+    void RenderStats() const noexcept;
     void RenderCoordinateAxis();
     void OnRender();
 };

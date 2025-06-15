@@ -2,11 +2,14 @@
 #include <chrono>
 #include <vector>
 #include <cstring>
+#include <cstdint>
 
 #include "Camera.h"
 #include "Config.h"
 #include "Renderer.h"
 #include "Application.h"
+
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof(*x))
 
 Application::Application(int width, int height) noexcept
     : m_ScreenWidth(width), m_ScreenHeight(height)
@@ -68,7 +71,7 @@ void Application::Simulate(float dt)
 }
 
 
-void Application::OnUpdate() noexcept
+void Application::OnUpdate(float dt) noexcept
 {
     if (m_ShowInfoText)
     {
@@ -102,6 +105,8 @@ void Application::OnUpdate() noexcept
                 m_SelectedBody = nullptr;
         }
     }
+
+    m_ElapsedTime += TIME_STEP * dt;
 }
 
 
@@ -133,14 +138,14 @@ void Application::Draw3DGridWithAxes(int size, float spacing) const noexcept
 }
 
 
-void Application::RenderPlanets(std::vector<Physics::RigidBody<FLOAT>>* bodies, const Physics::RigidBody<FLOAT>& sun)
+void Application::RenderPlanets(std::vector<Physics::RigidBody<FLOAT>>* bodies, const Physics::RigidBody<FLOAT>& sun) const
 {
     std::vector<Physics::RigidBody<FLOAT>>& bodiesRef = *bodies;
 
     for (size_t i = 0; i < bodiesRef.size(); i++)
     {
         Vector3 pos = Renderer::MetersToWorld(bodiesRef[i].GetPosition().ToRaylibVector(), m_SettingsWindow.GetRenderDistanceScale());
-        float renderedRadius = (float)(bodiesRef[i].GetRadius() / m_SettingsWindow.GetRenderRadiusScale());
+        const float renderedRadius = (float)(bodiesRef[i].GetRadius() / m_SettingsWindow.GetRenderRadiusScale());
 
         // Quick and dirty fix to add the radius off the planet and the sun to it's position to
         // properly render it
@@ -148,7 +153,7 @@ void Application::RenderPlanets(std::vector<Physics::RigidBody<FLOAT>>* bodies, 
         {
             Vector3 direction = Vector3Normalize(pos);
             pos = Vector3Add(pos, Vector3Scale(direction, renderedRadius)); // move forward by its rendered radius
-            pos = Vector3Add(pos, Vector3Scale(direction, sun.GetRadius() / m_SettingsWindow.GetRenderRadiusScale()));
+            pos = Vector3Add(pos, Vector3Scale(direction, (float)(sun.GetRadius() / m_SettingsWindow.GetRenderRadiusScale())));
         }
         bodiesRef[i].SetRenderPos(pos);
         DrawSphere(pos, renderedRadius, bodiesRef[i].GetColor());
@@ -156,42 +161,67 @@ void Application::RenderPlanets(std::vector<Physics::RigidBody<FLOAT>>* bodies, 
 }
 
 
-void Application::RenderPlanetStats(Physics::RigidBody<FLOAT>* stats)
+void Application::RenderPlanetStats() const noexcept
 {
-    if (stats != nullptr)
+    if (m_SelectedBody != nullptr)
     {
-        char dayText[64];
-        snprintf(dayText, 64, "Name: %s", stats->GetLabel());
-        Renderer::DrawText(dayText, 10, 80);
+        char text[64];
+        constexpr std::size_t textSize = ARRAY_SIZE(text);
+        std::snprintf(text, textSize, "Name: %s", m_SelectedBody->GetLabel());
+        Renderer::DrawText(text, 10, 100);
 
-        snprintf(dayText, 64, "Position X: %.f", stats->GetPosition().x);
-        Renderer::DrawText(dayText, 10, 100);
+        std::snprintf(text, textSize, "Position X: %.f", m_SelectedBody->GetPosition().x);
+        Renderer::DrawText(text, 10, 120);
 
-        snprintf(dayText, 64, "Position Y: %.f", stats->GetPosition().y);
-        Renderer::DrawText(dayText, 10, 120);
+        std::snprintf(text, textSize, "Position Y: %.f", m_SelectedBody->GetPosition().y);
+        Renderer::DrawText(text, 10, 140);
 
-        snprintf(dayText, 64, "Position Z: %.f", stats->GetPosition().z);
-        Renderer::DrawText(dayText, 10, 140);
+        std::snprintf(text, textSize, "Position Z: %.f", m_SelectedBody->GetPosition().z);
+        Renderer::DrawText(text, 10, 160);
 
-        snprintf(dayText, 64, "Velocity X: %.f M/S", stats->GetVelocity().x);
-        Renderer::DrawText(dayText, 10, 180);
+        std::snprintf(text, textSize, "Velocity X: %.f M/S", m_SelectedBody->GetVelocity().x);
+        Renderer::DrawText(text, 10, 200);
 
-        snprintf(dayText, 64, "Velocity Y: %.f M/S", stats->GetVelocity().y);
-        Renderer::DrawText(dayText, 10, 200);
+        std::snprintf(text, textSize, "Velocity Y: %.f M/S", m_SelectedBody->GetVelocity().y);
+        Renderer::DrawText(text, 10, 220);
 
-        snprintf(dayText, 64, "Velocity Z: %.f M/S", stats->GetVelocity().z);
-        Renderer::DrawText(dayText, 10, 220);
+        std::snprintf(text, textSize, "Velocity Z: %.f M/S", m_SelectedBody->GetVelocity().z);
+        Renderer::DrawText(text, 10, 240);
 
-        snprintf(dayText, 64, "Mass: %e KG", stats->GetMass());
-        Renderer::DrawText(dayText, 10, 240);
+        std::snprintf(text, textSize, "Mass: %e KG", m_SelectedBody->GetMass());
+        Renderer::DrawText(text, 10, 280);
 
-        const double dist = stats->GetPosition().Distance({ 0, 0, 0 });
+        const double dist = m_SelectedBody->GetPosition().Distance({ 0, 0, 0 });
         if (dist != 0.0)
         {
-            const double angle = std::asin(stats->GetPosition().y / dist);
-            snprintf(dayText, 64, "Inclination: %.4f Radians %.2f Degrees", angle, angle * (180 / Physics::Const::Pi));
-            Renderer::DrawText(dayText, 10, 260);
+            const double angle = std::asin(m_SelectedBody->GetPosition().y / dist);
+            std::snprintf(text, textSize, "Inclination: %.4f Radians %.2f Degrees", angle, angle * (180 / Physics::Const::Pi));
+            Renderer::DrawText(text, 10, 300);
         }
+    }
+}
+
+
+void Application::RenderStats() const noexcept
+{
+    const double daysPassed = m_ElapsedTime / (60.0 * 60.0 * 24.0);  // seconds to days
+
+    char text[64];
+    const std::size_t textSize = ARRAY_SIZE(text);
+
+    std::snprintf(text, textSize, "%d FPS", GetFPS());
+    Renderer::DrawText(text, 10, 10);
+
+    std::snprintf(text, textSize, "Days passed: %.2f", daysPassed);
+    Renderer::DrawText(text, 10, 40);
+
+    std::snprintf(text, textSize, "Simulation time: %.4f ms", m_SimulationTime);
+    Renderer::DrawText(text, 10, 60);
+
+    if (m_ShowInfoText)
+    {
+        std::strncpy(text, "Press F1 to open the settings window", textSize);
+        Renderer::DrawText(text, (ScreenWidth() - MeasureText(text, 20)) / 2, 10);
     }
 }
 
@@ -260,30 +290,11 @@ void Application::OnRender()
     EndMode3D();
 
     RenderCoordinateAxis();
-
-
-
-
-    m_ElapsedTime += TIME_STEP * GetFrameTime();
-    double daysPassed = m_ElapsedTime / (60.0 * 60.0 * 24.0);  // seconds to days
-    char dayText[64];
-    snprintf(dayText, 64, "Days passed: %.2f", daysPassed);
-    Renderer::DrawText(dayText, 10, 40);
-
-    snprintf(dayText, 64, "Simulation time: %.4f ms", m_SimulationTime);
-    Renderer::DrawText(dayText, 10, 60);
-
-    if (m_ShowInfoText)
-    {
-        std::strncpy(dayText, "Press F1 to open the settings window", 64);
-        MeasureText(dayText, 20);
-        Renderer::DrawText(dayText, (GetScreenWidth() - MeasureText(dayText, 20)) / 2, 10);
-    }
-
+    RenderStats();
+    RenderPlanetStats();
     m_SettingsWindow.Draw();
 
 
     DrawCircle(ScreenWidth() / 2, ScreenHeight() / 2, 1, WHITE);
-    RenderPlanetStats(m_SelectedBody);
     EndDrawing();
 }

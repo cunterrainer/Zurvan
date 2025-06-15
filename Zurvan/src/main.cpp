@@ -63,7 +63,7 @@ int main()
         }
 
         app.Simulate(dt);
-        app.OnUpdate();
+        app.OnUpdate(dt);
         app.OnRender();
     }
 
