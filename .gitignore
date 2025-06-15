@@ -5,6 +5,7 @@
 BIN/
 
 Makefile
+!Dependencies/raylib/src/Makefile
 *.make
 *.DS_STORE
 
