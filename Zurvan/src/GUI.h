@@ -140,7 +140,14 @@ public:
     void Show() noexcept
     {
         if (IsKeyPressed(m_ActivationKey))
+        {
             m_Visible = !m_Visible;
+
+            if (Visible())
+                EnableCursor();
+            else
+                DisableCursor();
+        }
 
         if (Visible())
         {

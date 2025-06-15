@@ -79,7 +79,7 @@ int main()
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Zurvan");
     SetWindowState(FLAG_WINDOW_RESIZABLE);
 
-    GUI gui;
+    SettingsWindow settingsWindow;
 
     // Camera setup
     Camera3D camera = { 0 };
@@ -113,7 +113,6 @@ int main()
     std::vector<Vector3> renderPositions(bodies.size());
 
     double elapsedTime = 0;
-    DisableCursor();
     while (!WindowShouldClose())
     {
         auto start = std::chrono::high_resolution_clock::now();
@@ -128,7 +127,8 @@ int main()
         auto end = std::chrono::high_resolution_clock::now();
         auto elapsed_ms = std::chrono::duration<double, std::milli>(end - start).count();
 
-        UpdateCameraOverride(&camera, CAMERA_FREE);
+        if (!settingsWindow.Visible())
+            UpdateCameraOverride(&camera, CAMERA_FREE);
 
         // Draw
         BeginDrawing();
@@ -140,7 +140,7 @@ int main()
         for (size_t i = 0; i < bodies.size(); i++) 
         {
             Vector3 pos = MetersToWorld(bodies[i]->GetPosition().ToRaylibVector()); 
-            float renderedRadius = bodies[i]->GetRadius() / RADIUS_SCALE;
+            float renderedRadius = (float)(bodies[i]->GetRadius() / RADIUS_SCALE);
 
             // Quick and dirty fix to add the radius off the planet and the sun to it's position to
             // properly render it
@@ -215,7 +215,7 @@ int main()
         snprintf(dayText, 64, "Simulation time: %.4f ms", elapsed_ms);
         DrawText(dayText, 10, 60, 20, WHITE);
         
-        //gui.Draw();
+        settingsWindow.Draw();
 
         // Draw Center
         Vector2 center = {
