@@ -176,7 +176,7 @@ public:
         {
             Vector3 pos = m_Bodies[i].GetRenderPos();
 
-            RayCollision collision = GetRayCollisionSphere(ray, pos, m_Bodies[i].GetRadius() / Renderer::Globals::RADIUS_SCALE);
+            RayCollision collision = GetRayCollisionSphere(ray, pos, (m_Bodies[i].GetRadius() / Renderer::Globals::RADIUS_SCALE) + 30);
             if (collision.hit)
             {
                 if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
