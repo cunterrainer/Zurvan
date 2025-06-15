@@ -15,9 +15,9 @@ objdir(cwd .. outputdir .. "bin-int")
 RaylibDir = cwd .. "/Dependencies/raylib"
 
 filter "system:windows"
-    platforms { "x64", "x86" }
+    platforms { "x64", "x86", "arm", "arm64" }
 filter "system:linux"
-    platforms "x64"
+    platforms { "x64", "x86", "arm", "arm64" }
 filter "system:macosx"
     platforms "universal"
 filter "system:emscripten" -- wasm
@@ -28,6 +28,10 @@ filter "platforms:x86"
     architecture "x86"
 filter "platforms:x64"
     architecture "x86_64"
+filter "platforms:arm"
+    architecture "ARM"
+filter "platforms:arm64"
+    architecture "ARM64"
 filter "platforms:universal"
     architecture "universal"
 filter "platforms:wasm32"
