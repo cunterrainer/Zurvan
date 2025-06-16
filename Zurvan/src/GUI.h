@@ -279,10 +279,10 @@ public:
         GuiDisableTooltip();
 
         GuiEnableTooltip();
-        GuiSetTooltip("Value is simulated hours every second, e.g. 1000 means simulate 1000 hours every second");
+        GuiSetTooltip("Value is simulated hours every second, high values can cause instability, try to increase the step size or change the algorithm");
         const int simulationRate = m_SimulationRate;
         GuiSpinner(ToWindowSpace(10, 105, 220, 20), NULL, &m_SimulationRate, 1, (int)1e7, m_SimulationRateEditMode);
-        GuiLabel(ToWindowSpace(235, 105, 220, 20), "Simulation rate");
+        GuiLabel(ToWindowSpace(235, 105, 220, 20), "Simulation rate, e.g. 1000 means simulate 1000 hours every second");
         if (simulationRate < m_SimulationRate)
         {
             if (simulationRate < 100)
