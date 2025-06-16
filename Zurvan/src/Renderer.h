@@ -1,10 +1,12 @@
 #pragma once
 #include <cmath>
 #include <vector>
+#include <cstddef>
 
 #include "raylib.h"
 #include "raymath.h"
 
+#include "Font.h"
 #include "Physics.h"
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*x))
@@ -18,7 +20,7 @@ public:
 public:
     static void Init() noexcept
     {
-        s_RenderFont = LoadFontEx("res/Fonts/Roboto/static/Roboto-Regular.ttf", FontSize, NULL, 0);
+        s_RenderFont = LoadFontFromMemory(".ttf", sg_Font, sg_FontSize, 25, NULL, 0);
         SetTextureFilter(s_RenderFont.texture, TEXTURE_FILTER_POINT);
     }
 
