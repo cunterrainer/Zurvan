@@ -241,32 +241,42 @@ public:
         GuiLabel(ToWindowSpace(10, 10, 220, 20), "Simulation algorithm");
         GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_LEFT);
 
+
+        GuiEnableTooltip();
+        GuiSetTooltip("Set the scaling of the objects distances, higher value means smaller distance");
         const int renderDistanceScale = m_RenderDistanceScale;
-        GuiSpinner(ToWindowSpace(10, 55, 220, 20), NULL, &m_RenderDistanceScale, 1e8, 1e9, m_RenderDistanceScaleEditMode);
+        GuiSpinner(ToWindowSpace(10, 55, 220, 20), NULL, &m_RenderDistanceScale, (int)1e8, (int)1e9, m_RenderDistanceScaleEditMode);
         GuiLabel(ToWindowSpace(235, 55, 220, 20), "Render distance scale");
         if (renderDistanceScale < m_RenderDistanceScale)
         {
-            m_RenderDistanceScale = renderDistanceScale + 1e8;
+            m_RenderDistanceScale = renderDistanceScale + (int)1e8;
         }
         else if (renderDistanceScale > m_RenderDistanceScale)
         {
-            m_RenderDistanceScale = renderDistanceScale - 1e8;
+            m_RenderDistanceScale = renderDistanceScale - (int)1e8;
         }
+        GuiDisableTooltip();
 
+
+        GuiEnableTooltip();
+        GuiSetTooltip("Set the scaling of the objects radii, higher value means smaller radius");
         const int renderRadiusScale = m_RenderRadiusScale;
-        GuiSpinner(ToWindowSpace(10, 80, 220, 20), NULL, &m_RenderRadiusScale, 1e5, 1e7, m_RenderRadiusScaleEditMode);
+        GuiSpinner(ToWindowSpace(10, 80, 220, 20), NULL, &m_RenderRadiusScale, (int)1e5, (int)1e7, m_RenderRadiusScaleEditMode);
         GuiLabel(ToWindowSpace(235, 80, 220, 20), "Render radius scale");
         if (renderRadiusScale < m_RenderRadiusScale)
         {
-            m_RenderRadiusScale = renderRadiusScale + 1e5;
+            m_RenderRadiusScale = renderRadiusScale + (int)1e5;
         }
         else if (renderRadiusScale > m_RenderRadiusScale)
         {
-            m_RenderRadiusScale = renderRadiusScale - 1e5;
+            m_RenderRadiusScale = renderRadiusScale - (int)1e5;
         }
+        GuiDisableTooltip();
 
+        GuiEnableTooltip();
+        GuiSetTooltip("Value is simulated hours every second, e.g. 1000 means simulate 1000 hours every second");
         const int simulationRate = m_SimulationRate;
-        GuiSpinner(ToWindowSpace(10, 105, 220, 20), NULL, &m_SimulationRate, 1, 1e7, m_SimulationRateEditMode);
+        GuiSpinner(ToWindowSpace(10, 105, 220, 20), NULL, &m_SimulationRate, 1, (int)1e7, m_SimulationRateEditMode);
         GuiLabel(ToWindowSpace(235, 105, 220, 20), "Simulation rate");
         if (simulationRate < m_SimulationRate)
         {
@@ -282,6 +292,7 @@ public:
             else
                 m_SimulationRate = simulationRate - 100;
         }
+        GuiDisableTooltip();
 
         GuiUnlock();
         if (GuiDropdownBox(ToWindowSpace(10, 30, 220, 20), "Euler integration;Velocity Verlet algorithm;Runge-Kutta 4th", &m_SelectedSimulationMode, (int)m_SimulationModeDropdownEditMode))
