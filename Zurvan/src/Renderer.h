@@ -14,19 +14,26 @@
 class Renderer
 {
 private:
-    static inline Font s_RenderFont;
+    static inline Font s_RenderFontText;
+    static inline Font s_RenderFontUI;
 public:
     static constexpr int FontSize = 25;
 public:
     static void Init() noexcept
     {
-        s_RenderFont = LoadFontFromMemory(".ttf", sg_Font, sg_FontSize, 25, NULL, 0);
-        SetTextureFilter(s_RenderFont.texture, TEXTURE_FILTER_POINT);
+        // We have to load the same font twice with different sizes, otherwise the font will look really
+        // bad even though we scale it down
+        s_RenderFontText = LoadFontFromMemory(".ttf", sg_Font, sg_FontSize, 25, NULL, 0);
+        SetTextureFilter(s_RenderFontText.texture, TEXTURE_FILTER_POINT);
+
+        s_RenderFontUI = LoadFontFromMemory(".ttf", sg_Font, sg_FontSize, 20, NULL, 0);
+        SetTextureFilter(s_RenderFontUI.texture, TEXTURE_FILTER_POINT);
     }
 
     static void Shutdown() noexcept
     {
-        UnloadFont(s_RenderFont);
+        UnloadFont(s_RenderFontText);
+        UnloadFont(s_RenderFontUI);
     }
 
     static Vector3 MetersToWorld(Vector3 meters, float distanceScale) noexcept
@@ -36,7 +43,12 @@ public:
 
     static void DrawText(const char* text, int x, int y, Color color = WHITE) noexcept
     {
-        DrawTextEx(s_RenderFont, text, { static_cast<float>(x), static_cast<float>(y)}, FontSize, 0, color);
+        DrawTextEx(s_RenderFontText, text, { static_cast<float>(x), static_cast<float>(y)}, FontSize, 0, color);
+    }
+
+    static const Font& GetFontUI() noexcept
+    {
+        return s_RenderFontUI;
     }
 
     static void Draw3DGridWithAxes(int size, float spacing) noexcept

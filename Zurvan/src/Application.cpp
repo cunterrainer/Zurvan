@@ -12,8 +12,6 @@
 Application::Application(int width, int height) noexcept
     : m_ScreenWidth(width), m_ScreenHeight(height)
 {
-    m_SettingsWindow.Init();
-
     m_Camera.position = Vector3{ 250.0f, 1900.0f, 3350.0f };
     m_Camera.target = Vector3{ 1700.0f, 350.0f, 140.0f };
     m_Camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
