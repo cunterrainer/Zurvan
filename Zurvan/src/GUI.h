@@ -217,7 +217,7 @@ private:
     int m_SimulationRate = 1000;
     bool m_SimulationRateEditMode = false;
 public:
-    SettingsWindow() : FloatingWindow(20, 20, 500, 500, "Settings", KEY_F1, 200, 200) {}
+    SettingsWindow() : FloatingWindow(20, 20, 500, 500, "Settings", KEY_F1, 400, 200) {}
 
     float GetRenderDistanceScale() const noexcept
     {
@@ -237,11 +237,13 @@ public:
         if (m_SimulationModeDropdownEditMode)
             GuiLock();
 
-        GuiLabel(ToWindowSpace(10, 10, 150, 20), "Simulation algorithm");
+        GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
+        GuiLabel(ToWindowSpace(10, 10, 220, 20), "Simulation algorithm");
+        GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_LEFT);
 
         const int renderDistanceScale = m_RenderDistanceScale;
-        GuiSpinner(ToWindowSpace(10, 50, 150, 20), NULL, &m_RenderDistanceScale, 1e8, 1e9, m_RenderDistanceScaleEditMode);
-        GuiLabel(ToWindowSpace(160, 50, 50, 20), "Render distance scale");
+        GuiSpinner(ToWindowSpace(10, 55, 220, 20), NULL, &m_RenderDistanceScale, 1e8, 1e9, m_RenderDistanceScaleEditMode);
+        GuiLabel(ToWindowSpace(235, 55, 220, 20), "Render distance scale");
         if (renderDistanceScale < m_RenderDistanceScale)
         {
             m_RenderDistanceScale = renderDistanceScale + 1e8;
@@ -252,7 +254,8 @@ public:
         }
 
         const int renderRadiusScale = m_RenderRadiusScale;
-        GuiSpinner(ToWindowSpace(10, 70, 150, 20), NULL, &m_RenderRadiusScale, 1e5, 1e7, m_RenderRadiusScaleEditMode);
+        GuiSpinner(ToWindowSpace(10, 80, 220, 20), NULL, &m_RenderRadiusScale, 1e5, 1e7, m_RenderRadiusScaleEditMode);
+        GuiLabel(ToWindowSpace(235, 80, 220, 20), "Render radius scale");
         if (renderRadiusScale < m_RenderRadiusScale)
         {
             m_RenderRadiusScale = renderRadiusScale + 1e5;
@@ -262,8 +265,26 @@ public:
             m_RenderRadiusScale = renderRadiusScale - 1e5;
         }
 
+        const int simulationRate = m_SimulationRate;
+        GuiSpinner(ToWindowSpace(10, 105, 220, 20), NULL, &m_SimulationRate, 1, 1e7, m_SimulationRateEditMode);
+        GuiLabel(ToWindowSpace(235, 105, 220, 20), "Simulation rate");
+        if (simulationRate < m_SimulationRate)
+        {
+            if (simulationRate < 100)
+                m_SimulationRate = 100;
+            else
+                m_SimulationRate = simulationRate + 100;
+        }
+        else if (simulationRate > m_SimulationRate)
+        {
+            if (m_SimulationRate < 100)
+                m_SimulationRate = 1;
+            else
+                m_SimulationRate = simulationRate - 100;
+        }
+
         GuiUnlock();
-        if (GuiDropdownBox(ToWindowSpace(10, 30, 170, 20), "Euler integration;Velocity Verlet algorithm;Runge-Kutta 4th", &m_SelectedSimulationMode, (int)m_SimulationModeDropdownEditMode))
+        if (GuiDropdownBox(ToWindowSpace(10, 30, 220, 20), "Euler integration;Velocity Verlet algorithm;Runge-Kutta 4th", &m_SelectedSimulationMode, (int)m_SimulationModeDropdownEditMode))
             m_SimulationModeDropdownEditMode = !m_SimulationModeDropdownEditMode;
     }
 };
