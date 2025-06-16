@@ -68,6 +68,12 @@ namespace Physics
         constexpr FLOAT NEPTUN_SUN_DISTANCE  = static_cast<FLOAT>(4500000000000);
         constexpr FLOAT NEPTUN_INCLINE       = static_cast<FLOAT>(0.031);
         constexpr FLOAT NEPTUN_RADIUS        = static_cast<FLOAT>(24622000);
+
+        constexpr FLOAT PLUTO_MASS = static_cast<FLOAT>(1.303e22);
+        constexpr FLOAT PLUTO_SPEED = static_cast<FLOAT>(4748);
+        constexpr FLOAT PLUTO_SUN_DISTANCE = static_cast<FLOAT>(5900000000000);
+        constexpr FLOAT PLUTO_INCLINE = static_cast<FLOAT>(0.2994985);
+        constexpr FLOAT PLUTO_RADIUS = static_cast<FLOAT>(1188000);
     };
 
 

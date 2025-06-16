@@ -27,6 +27,7 @@ Application::Application(int width, int height) noexcept
     m_Bodies.emplace_back(Physics::Const::SATURN_SUN_DISTANCE, -Physics::Const::SATURN_SPEED, Physics::Const::SATURN_MASS, Physics::Const::SATURN_RADIUS, Physics::Const::SATURN_INCLINE, "Saturn", VIOLET);
     m_Bodies.emplace_back(Physics::Const::URANUS_SUN_DISTANCE, -Physics::Const::URANUS_SPEED, Physics::Const::URANUS_MASS, Physics::Const::URANUS_RADIUS, Physics::Const::URANUS_INCLINE, "Uranus", SKYBLUE);
     m_Bodies.emplace_back(Physics::Const::NEPTUN_SUN_DISTANCE, -Physics::Const::NEPTUN_SPEED, Physics::Const::NEPTUN_MASS, Physics::Const::NEPTUN_RADIUS, Physics::Const::NEPTUN_INCLINE, "Neptun", DARKBLUE);
+    m_Bodies.emplace_back(Physics::Const::PLUTO_SUN_DISTANCE, -Physics::Const::PLUTO_SPEED, Physics::Const::PLUTO_MASS, Physics::Const::PLUTO_RADIUS, Physics::Const::PLUTO_INCLINE, "Pluto", WHITE);
 
     m_SelectedBody = nullptr;
     m_InfoTimer = std::chrono::steady_clock::now();
@@ -85,7 +86,7 @@ void Application::OnUpdate(float dt) noexcept
         for (size_t i = 0; i < m_Bodies.size(); i++)
         {
             const Vector3 pos = m_Bodies[i].GetRenderPos();
-            const float radius = static_cast<float>((m_Bodies[i].GetRadius() / m_SettingsWindow.GetRenderRadiusScale()) + 30);
+            const float radius = static_cast<float>((m_Bodies[i].GetRadius() / m_SettingsWindow.GetRenderRadiusScale()) + 70);
 
             const RayCollision collision = GetRayCollisionSphere(ray, pos, radius);
             if (collision.hit)
