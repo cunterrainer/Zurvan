@@ -56,7 +56,7 @@ void Application::Simulate(float dt)
     {
         //Physics::VelocityVerlet(&m_Bodies, TIME_STEP, dt);
         //Physics::RungeKutta4th(&m_Bodies, TIME_STEP, dt);
-        Physics::EulerIntegration(&m_Bodies, TIME_STEP, dt);
+        Physics::EulerIntegration(&m_Bodies, TIME_STEP * m_SettingsWindow.GetSimulationRate(), dt);
     }
     const auto end = std::chrono::high_resolution_clock::now();
     m_SimulationTime = std::chrono::duration<double, std::milli>(end - start).count();
@@ -98,7 +98,7 @@ void Application::OnUpdate(float dt) noexcept
         }
     }
 
-    m_ElapsedTime += TIME_STEP * dt;
+    m_ElapsedTime += TIME_STEP * m_SettingsWindow.GetSimulationRate() * dt;
 }
 
 

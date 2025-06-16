@@ -229,6 +229,11 @@ public:
         return static_cast<float>(m_RenderRadiusScale);
     }
 
+    int GetSimulationRate() const noexcept
+    {
+        return m_SimulationRate;
+    }
+
     void Draw() noexcept
     {
         FloatingWindow::Show();

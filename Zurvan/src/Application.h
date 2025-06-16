@@ -12,8 +12,7 @@
 class Application
 {
 private:
-    #define TIME_SCALAR 1000.0
-    const double TIME_STEP = 60 * 60 * TIME_SCALAR;        // 1 hour per frame
+    const double TIME_STEP = 60 * 60; // 1 hour per second
 private:
     int m_ScreenWidth;
     int m_ScreenHeight;
