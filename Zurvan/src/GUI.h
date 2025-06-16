@@ -172,10 +172,10 @@ private:
     int m_SelectedSimulationMode = 0;
     bool m_SimulationModeDropdownEditMode = false;
 
-    int m_RenderDistanceScale = Globals::DISTANCE_SCALE;
+    int m_RenderDistanceScale = 700000000; // 1 px = 700,000,000 meters
     bool m_RenderDistanceScaleEditMode = false;
 
-    int m_RenderRadiusScale = Globals::RADIUS_SCALE;
+    int m_RenderRadiusScale = 1e6; // 1 px = 1,000,000 meters
     bool m_RenderRadiusScaleEditMode = false;
 
     int m_SimulationRate = 1000;

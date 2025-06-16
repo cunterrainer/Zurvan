@@ -9,13 +9,6 @@
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*x))
 
-namespace Globals
-{
-    inline double DISTANCE_SCALE = 700000000; // 1 px = 700,000,000 meters
-    inline double RADIUS_SCALE = 1e6; // 1 px = 1,000,000 meters
-}
-
-
 class Renderer
 {
 private:

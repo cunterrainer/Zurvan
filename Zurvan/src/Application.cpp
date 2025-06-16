@@ -87,7 +87,7 @@ void Application::OnUpdate(float dt) noexcept
         for (size_t i = 0; i < m_Bodies.size(); i++)
         {
             const Vector3 pos = m_Bodies[i].GetRenderPos();
-            const float radius = static_cast<float>((m_Bodies[i].GetRadius() / Globals::RADIUS_SCALE) + 30);
+            const float radius = static_cast<float>((m_Bodies[i].GetRadius() / m_SettingsWindow.GetRenderRadiusScale()) + 30);
 
             const RayCollision collision = GetRayCollisionSphere(ray, pos, radius);
             if (collision.hit)
