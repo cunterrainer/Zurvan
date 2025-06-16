@@ -175,16 +175,20 @@ public:
         return { m_Bounds.x + x, m_Bounds.y + y + StatusBarHeight, static_cast<float>(width), static_cast<float>(height) };
     }
 
+    void ToggleCursor() const noexcept
+    {
+        if (Visible())
+            EnableCursor();
+        else
+            DisableCursor();
+    }
+
     void Show() noexcept
     {
         if (IsKeyPressed(m_ActivationKey))
         {
             m_Visible = !m_Visible;
-
-            if (Visible())
-                EnableCursor();
-            else
-                DisableCursor();
+            ToggleCursor();
         }
 
         if (Visible())
@@ -192,6 +196,8 @@ public:
             Update();
             m_Visible = !GuiWindowBox({ m_Bounds.x, m_Bounds.y, m_Bounds.width, m_Bounds.height }, m_Title);
             GuiDrawIcon(ICON_CURSOR_SCALE_LEFT_FILL, m_Bounds.x + m_Bounds.width - 20, m_Bounds.y + m_Bounds.height - 20, 1, WHITE);
+            
+            if (!m_Visible) ToggleCursor();
         }
     }
 
@@ -214,7 +220,7 @@ private:
     int m_RenderRadiusScale = 1e6; // 1 px = 1,000,000 meters
     bool m_RenderRadiusScaleEditMode = false;
 
-    int m_SimulationRate = 1000;
+    int m_SimulationRate = 10000;
     bool m_SimulationRateEditMode = false;
 public:
     SettingsWindow() : FloatingWindow(20, 20, 500, 500, "Settings", KEY_F1, 400, 200) {}
