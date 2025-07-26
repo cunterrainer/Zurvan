@@ -4,6 +4,7 @@
     We have overridden the default RL_CULL_DISTANCE_FAR clipping distance (original 1000.0) to 20000.0
 */
 
+#include "Clang.h"
 #include "Renderer.h"
 #include "Application.h"
 

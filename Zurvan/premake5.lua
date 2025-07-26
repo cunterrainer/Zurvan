@@ -25,6 +25,7 @@ project "Zurvan"
     }
 
     filter "system:windows"
+        defines "SYSTEM_WINDOWS"
         links {
             "Winmm",
             "opengl32",
@@ -115,6 +116,7 @@ project "Zurvan"
             "long-long",
             "implicit-fallthrough", 
         }
+        defines "TOOLCHAIN_CLANG"
 
     filter { "system:emscripten", "configurations:Release or configurations:Distribution or configurations:MinSizeDistribution" }
         linkoptions "--memory-init-file 0"

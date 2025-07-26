@@ -57,7 +57,7 @@ filter { "configurations:Distribution" }
     runtime "Release"
     symbols "off"
     optimize "Full"
-    defines { "NDEBUG", "_CRT_SECURE_NO_WARNINGS" }
+    defines { "CONFIG_DISTRIBUTION", "NDEBUG", "_CRT_SECURE_NO_WARNINGS" }
     floatingpoint "fast"
     linktimeoptimization "on"
 
@@ -65,7 +65,7 @@ filter { "configurations:MinSizeDistribution" }
     runtime "Release"
     symbols "off"
     optimize "Size"
-    defines { "NDEBUG", "_CRT_SECURE_NO_WARNINGS" }
+    defines { "CONFIG_DISTRIBUTION", "NDEBUG", "_CRT_SECURE_NO_WARNINGS" }
     floatingpoint "fast"
     linktimeoptimization "on"
 
