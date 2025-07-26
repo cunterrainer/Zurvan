@@ -57,8 +57,8 @@ project "Zurvan"
     filter { "toolset:msc*", "configurations:Release or configurations:Distribution or configurations:MinSizeDistribution" }
         warnings "High" -- High
         externalwarnings "off" -- Default
+        disablewarnings "4244" -- int to float without cast
         -- buildoptions { "/sdl" } -- only usefull for debug and maybe not even that, we don't want uninitialized pointers to be nullptrs
-        -- disablewarnings "4244" -- float to int without cast
 
     filter { "toolset:gcc* or toolset:clang*", "configurations:Release or configurations:Distribution or configurations:MinSizeDistribution" }
         enablewarnings {
