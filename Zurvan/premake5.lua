@@ -49,7 +49,7 @@ project "Zurvan"
 
     filter "system:emscripten"
         defines "SYSTEM_WEB"
-        linkoptions { "-sUSE_GLFW=3", "-sASYNCIFY", "-sMIN_WEBGL_VERSION=2", "-sMAX_WEBGL_VERSION=2", "-sALLOW_MEMORY_GROWTH=1", "-sUSE_PTHREADS=1", "-sSTACK_SIZE=131072" }
+        linkoptions { "-sUSE_GLFW=3", "-sASYNCIFY", "-sMIN_WEBGL_VERSION=2", "-sMAX_WEBGL_VERSION=2", "-sALLOW_MEMORY_GROWTH=1", "-sUSE_PTHREADS=1", "-sSTACK_SIZE=1048576" }
 
     filter "configurations:Debug"
         warnings "off"
