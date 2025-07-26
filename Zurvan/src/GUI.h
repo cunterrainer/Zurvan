@@ -211,7 +211,7 @@ public:
 class SettingsWindow : public FloatingWindow
 {
 private:
-    int m_SelectedSimulationMode = 0;
+    int m_SelectedSimulationMode = (int)Physics::SimulationAlgorithm::EulerIntegration;
     bool m_SimulationModeDropdownEditMode = false;
 
     int m_RenderDistanceScale = 700000000; // 1 px = 700,000,000 meters
@@ -238,6 +238,11 @@ public:
     int GetSimulationRate() const noexcept
     {
         return m_SimulationRate;
+    }
+
+    int GetSimulationMode() const noexcept
+    {
+        return m_SelectedSimulationMode;
     }
 
     void Draw() noexcept

@@ -83,6 +83,14 @@ namespace Physics
     };
 
 
+    enum class SimulationAlgorithm
+    {
+        EulerIntegration,
+        VerletAlgorithm,
+        RungeKutta
+    };
+
+
     template <typename T>
     class RigidBody
     {
