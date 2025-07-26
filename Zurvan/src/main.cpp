@@ -4,6 +4,10 @@
     We have overridden the default RL_CULL_DISTANCE_FAR clipping distance (original 1000.0) to 20000.0
 */
 
+#ifdef SYSTEM_WEB
+#include <emscripten/emscripten.h>
+#endif
+
 #include "Clang.h"
 #include "Renderer.h"
 #include "Application.h"
@@ -45,6 +49,23 @@
 //DrawText(distTextB, screenMidB.x - textWidthB / 2, screenMidB.y - fontSize / 2, fontSize, WHITE);
 
 
+void ApplicationLoop(void* args)
+{
+    Application* app = (Application*)args;
+
+    const float dt = GetFrameTime();
+
+    if (IsWindowResized())
+    {
+        app->SetScreenSize(GetScreenWidth(), GetScreenHeight());
+    }
+
+    app->Simulate(dt);
+    app->OnUpdate(dt);
+    app->OnRender();
+}
+
+
 int main()
 {
     InitWindow(1280, 720, "Zurvan");
@@ -54,19 +75,15 @@ int main()
     Renderer::Init();
 
     Application app(GetScreenWidth(), GetScreenHeight());
+
+#ifdef SYSTEM_WEB
+    emscripten_set_main_loop_arg(ApplicationLoop, (void*)&app, 0, 1);
+#else
     while (!WindowShouldClose())
     {
-        const float dt = GetFrameTime();
-
-        if (IsWindowResized())
-        {
-            app.SetScreenSize(GetScreenWidth(), GetScreenHeight());
-        }
-
-        app.Simulate(dt);
-        app.OnUpdate(dt);
-        app.OnRender();
+        ApplicationLoop((void*)&app);
     }
+#endif // SYSTEM_WEB
 
     Renderer::Shutdown();
     TerminateWindow();
