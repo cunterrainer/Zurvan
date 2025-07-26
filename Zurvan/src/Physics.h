@@ -75,11 +75,12 @@ namespace Physics
         constexpr FLOAT PLUTO_INCLINE = static_cast<FLOAT>(0.2994985);
         constexpr FLOAT PLUTO_RADIUS = static_cast<FLOAT>(1188000);
 
-        constexpr FLOAT MOON_MASS = 7.347e22; // kg
-        constexpr FLOAT MOON_EARTH_DISTANCE = 384400000; // meters
-        constexpr FLOAT MOON_SPEED = 1022; // meters per second
-        constexpr FLOAT MOON_INCLINE = 0.0872665;
-        constexpr FLOAT MOON_RADIUS = static_cast<FLOAT>(1737000);
+        // Commented out because unused (yet)
+        //constexpr FLOAT MOON_MASS = 7.347e22; // kg
+        //constexpr FLOAT MOON_EARTH_DISTANCE = 384400000; // meters
+        //constexpr FLOAT MOON_SPEED = 1022; // meters per second
+        //constexpr FLOAT MOON_INCLINE = 0.0872665;
+        //constexpr FLOAT MOON_RADIUS = static_cast<FLOAT>(1737000);
     };
 
 
@@ -209,20 +210,20 @@ namespace Physics
     };
 
 
-    template <typename T>
-    constexpr Math::Vector3<T> ComputeBarycenter(Physics::RigidBody<T>* bodies[], int count)
-    {
-        T totalMass = static_cast<T>(0);
-        Math::Vector3<T> weighted;
-
-        for (int i = 0; i < count; i++)
-        {
-            totalMass += bodies[i].GetMass();
-            weighted += bodies[i].GetPosition() * bodies[i].GetMass();
-        }
-
-        return weighted * (static_cast<T>(1) / totalMass);
-    }
+    //template <typename T>
+    //constexpr Math::Vector3<T> ComputeBarycenter(Physics::RigidBody<T>* bodies[], int count)
+    //{
+    //    T totalMass = static_cast<T>(0);
+    //    Math::Vector3<T> weighted;
+    //
+    //    for (int i = 0; i < count; i++)
+    //    {
+    //        totalMass += bodies[i].GetMass();
+    //        weighted += bodies[i].GetPosition() * bodies[i].GetMass();
+    //    }
+    //
+    //    return weighted * (static_cast<T>(1) / totalMass);
+    //}
 
 
     inline void EulerIntegration(std::vector<Physics::RigidBody<FLOAT>>* bodies, double timeStep, float dt) noexcept
