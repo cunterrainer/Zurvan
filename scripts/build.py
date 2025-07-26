@@ -25,7 +25,7 @@ def ExecProcess(args):
     print()
 
     errors = ""
-    popen = sp.Popen(args, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)
+    popen = sp.Popen(args, stdout=sp.PIPE, stderr=sp.PIPE, env=os.environ.copy(), universal_newlines=True)
     for stdoutLine in iter(popen.stdout.readline, ""):
         print(colored(stdoutLine, "green"), end="")
     for stderrLine in iter(popen.stderr.readline, ""):
@@ -51,6 +51,7 @@ def ExecProcessList(argsList):
 
 def main():
     useGcc = False
+    useEmcc = False
     useClang = False
     if len(argv) == 1:
         useGcc = True
@@ -61,6 +62,16 @@ def main():
                 useGcc = True
             elif arg.lower() == "clang":
                 useClang = True
+            elif arg.lower() == "emcc":
+                useEmcc = True
+            elif arg.lower() == "help":
+                print("Usage: python " + argv[0] + " [options]")
+                print("       gcc     Compile using gcc")
+                print("       clang   Compile using clang")
+                print("       emcc    Compile using emcc (emscripten for web builds)")
+                print("No options defaults to gcc and clang without emscripten")
+                print("Options can be concatinated e.g.: gcc clang emcc enables all three build configurations")
+                return
 
     if sys.platform == "win32":
         exePath = "vendor/premake5.exe"
@@ -84,13 +95,22 @@ def main():
                      ["make", "-j", "config=debug_x64"], ["make", "-j", "config=release_x64"], ["make", "-j", "config=distribution_x64"], ["make", "-j", "config=minsizedistribution_x64"],
                      ["make", "-j", "config=debug_x86"], ["make", "-j", "config=release_x86"], ["make", "-j", "config=distribution_x86"], ["make", "-j", "config=minsizedistribution_x86"]]
 
+    emccProc = [[exePath, "gmake", "--os=emscripten"],
+                ["make", "-j", "config=debug_wasm32"], ["make", "-j", "config=release_wasm32"], ["make", "-j", "config=distribution_wasm32"], ["make", "-j", "config=minsizedistribution_wasm32"],
+                ["make", "-j", "config=debug_wasm64"], ["make", "-j", "config=release_wasm64"], ["make", "-j", "config=distribution_wasm64"], ["make", "-j", "config=minsizedistribution_wasm64"]]
+
     if useGcc:
         RemoveFolder(binDir + "gcc/")
         if not ExecProcessList(gccProc):
             return
     if useClang:
         RemoveFolder(binDir + "clang/")
-        ExecProcessList(clangProc)
+        if not ExecProcessList(clangProc):
+            return
+
+    if useEmcc:
+        RemoveFolder(binDir + "emcc/")
+        ExecProcessList(emccProc)
 
 
 if __name__=="__main__":
