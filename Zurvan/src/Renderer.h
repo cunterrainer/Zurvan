@@ -1,6 +1,8 @@
 #pragma once
 #include <cmath>
 #include <vector>
+#include <cstdio>
+#include <cstring>
 #include <cstddef>
 
 #include "raylib.h"
