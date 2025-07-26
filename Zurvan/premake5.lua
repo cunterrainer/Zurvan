@@ -72,7 +72,7 @@ project "Zurvan"
             "missing-field-initializers",
             "unused-parameter",
             "redundant-decls",
-            "shadow",
+            -- "shadow",
             "sign-conversion",
             "strict-overflow=5",
             "switch-default",
@@ -81,16 +81,16 @@ project "Zurvan"
             "unreachable-code",
             "unused",
             "alloca",
-            "conversion",
-            "deprecated",
+            -- "conversion",
+            -- "deprecated",
             "format-security",
             "null-dereference",
-            "deprecated-copy",
+            -- "deprecated-copy",
             "stack-protector",
             "vla",
             "shift-overflow"
         }
-        disablewarnings { "unknown-warning-option" }
+        disablewarnings { "unknown-warning-option", "deprecated-copy" }
 
     filter { "toolset:gcc*", "configurations:Release or configurations:Distribution or configurations:MinSizeDistribution" }
         warnings "Extra"
