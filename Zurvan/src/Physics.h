@@ -74,6 +74,12 @@ namespace Physics
         constexpr FLOAT PLUTO_SUN_DISTANCE = static_cast<FLOAT>(5900000000000);
         constexpr FLOAT PLUTO_INCLINE = static_cast<FLOAT>(0.2994985);
         constexpr FLOAT PLUTO_RADIUS = static_cast<FLOAT>(1188000);
+
+        constexpr FLOAT MOON_MASS = 7.347e22; // kg
+        constexpr FLOAT MOON_EARTH_DISTANCE = 384400000; // meters
+        constexpr FLOAT MOON_SPEED = 1022; // meters per second
+        constexpr FLOAT MOON_INCLINE = 0.0872665;
+        constexpr FLOAT MOON_RADIUS = static_cast<FLOAT>(1737000);
     };
 
 
@@ -91,6 +97,8 @@ namespace Physics
         const char* m_Label;
         Color m_Color;
     public:
+        RigidBody() = default;
+
         RigidBody(T distanceToCenter, T velocityAroundCenter, T mass, double radius, double inclination, const char* name, Color color)
             : m_Mass(mass), m_Radius(radius), m_Label(name), m_Color(color)
         {
@@ -141,9 +149,19 @@ namespace Physics
             m_Velocity = v;
         }
 
-        constexpr void SetMass(T m) noexcept
+        constexpr void SetMass(T mass) noexcept
         {
-            m_Mass = m;
+            m_Mass = mass;
+        }
+
+        constexpr void SetColor(Color color) noexcept
+        {
+            m_Color = color;
+        }
+
+        constexpr void SetLabel(const char* label) noexcept
+        {
+            m_Label = label;
         }
 
         constexpr const Math::Vector3<T>& GetVelocity() const noexcept
