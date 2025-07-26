@@ -48,7 +48,8 @@ project "Zurvan"
         disablewarnings { "sign-conversion" }
 
     filter "system:emscripten"
-        linkoptions { "-sUSE_GLFW=3", "-sASYNCIFY", "-sMIN_WEBGL_VERSION=2", "-sMAX_WEBGL_VERSION=2", "-sALLOW_MEMORY_GROWTH=1", "-sUSE_PTHREADS=1" }
+        defines "SYSTEM_WEB"
+        linkoptions { "-sUSE_GLFW=3", "-sASYNCIFY", "-sMIN_WEBGL_VERSION=2", "-sMAX_WEBGL_VERSION=2", "-sALLOW_MEMORY_GROWTH=1", "-sUSE_PTHREADS=1", "-sSTACK_SIZE=131072" }
 
     filter "configurations:Debug"
         warnings "off"
@@ -119,9 +120,10 @@ project "Zurvan"
         defines "TOOLCHAIN_CLANG"
 
     filter { "system:emscripten", "configurations:Release or configurations:Distribution or configurations:MinSizeDistribution" }
-        linkoptions "--memory-init-file 0"
+        --linkoptions "--memory-init-file 0"
         warnings "Extra"
         externalwarnings "Everything"
+        disablewarnings { "deprecated-copy-with-user-provided-copy" }
 
     filter { "configurations:Debug" }
         kind "ConsoleApp"
