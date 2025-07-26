@@ -7,9 +7,9 @@
 #include "Renderer.h"
 #include "Application.h"
 
-const double MOON_MASS = 7.347e22; // kg
-const double EARTH_MOON_DISTANCE = 384400000; // meters
-const double MOON_SPEED = 1022; // meters per second
+//const double MOON_MASS = 7.347e22; // kg
+//const double EARTH_MOON_DISTANCE = 384400000; // meters
+//const double MOON_SPEED = 1022; // meters per second
 
 //const double DISTANCE_SCALE = 700000000; // 1 px = 700,000,000 meters
 //const double RADIUS_SCALE = 1e6; // 1 px = 1,000,000 meters
