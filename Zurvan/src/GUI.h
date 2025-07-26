@@ -223,7 +223,7 @@ private:
     int m_SimulationRate = 10000;
     bool m_SimulationRateEditMode = false;
 public:
-    SettingsWindow() : FloatingWindow(20, 20, 500, 500, "Settings", KEY_F1, 400, 200) {}
+    SettingsWindow() : FloatingWindow(20, 20, 500, 500, "Settings", KEY_F1, 500, 200) {}
 
     float GetRenderDistanceScale() const noexcept
     {
