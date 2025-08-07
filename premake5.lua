@@ -74,7 +74,10 @@ filter { "configurations:Release or configurations:Distribution or configuration
     buildoptions { "-ffunction-sections", "-fdata-sections" } -- places each function and data item in its own section
     linkoptions { "-Wl,--gc-sections" } -- remove unused sections (code)
 
-filter { "system:linux or system:macosx", "configurations:Release or configurations:Distribution or configurations:MinSizeDistribution", "toolset:clang*" }
+filter { "system:macosx", "configurations:Release or configurations:Distribution or configurations:MinSizeDistribution", "toolset:clang*" }
+    buildoptions { "-ffunction-sections", "-fdata-sections" } -- places each function and data item in its own section
+
+filter { "system:linux", "configurations:Release or configurations:Distribution or configurations:MinSizeDistribution", "toolset:clang*" }
     buildoptions { "-ffunction-sections", "-fdata-sections" } -- places each function and data item in its own section
     linkoptions { "-Wl,--gc-sections" } -- remove unused sections (code)
 
